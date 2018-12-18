@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>Leaderboard</title>
+</head>
+
+<body>
+<div id="app">
+
+<table>
+    <thead>
+        <th>Player</th>
+        <th>Total</th>
+        <th>Won</th>
+        <th>Lost</th>
+        <th>Tied</th>
+    </thead>
+    <tbody>
+        <tr v-for="player in getLeaderboardInfo">
+            <td>{{player.name}}</td>
+            <td>{{player.total}}</td>
+            <td>{{player.wins}}</td>
+            <td>{{player.losses}}</td>
+            <td>{{player.ties}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- <ol  type="1">
+    <li v-for="game in games">{{game.created}}, <span>Players:</span>
+        <span v-for="gamePlayer in game.gamePlayers">{{gamePlayer.player.username}}; </span>
+    </li>
+</ol> -->
+
+
+
+</div>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="games.js"></script>
+</body>
+</html>

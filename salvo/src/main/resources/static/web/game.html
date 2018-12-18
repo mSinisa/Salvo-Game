@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <title>Game View</title>
+    <link type="text/css" rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <div id="app">
+        <h1>Welcome Player</h1>
+        <!-- <h2>{{gameInfo.gamePlayers[0].player.username}} vs {{gameInfo.gamePlayers[1].player.username}}</h2> -->
+        <h2 id="nameDisplay"></h2>
+        <div class="tablesContainer">
+            <div class="individualTable">
+                <table id="tablePlayer">
+                    <tbody>
+                        <tr class="gpRow">
+                            <td v-for="column in columns" class="gridBox">{{column}}</td>
+                        </tr>
+                        <tr v-for="(row, counter) in rows" class="gpRow">
+                            <td class="gridBox">{{row}}</td>
+                            <td v-for="(row, index) in rows" class="gridBox" :id='getId(counter, index, "pl")'></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="individualTable">
+                <table id="tableOpponent">
+                    <tbody>
+                        <tr class="gpRow">
+                            <td v-for="column in columns" class="gridBox">{{column}}</td>
+                        </tr>
+                        <tr v-for="(row, counter) in rows" class="gpRow">
+                            <td class="gridBox">{{row}}</td>
+                            <td v-for="(row, index) in rows" class="gridBox" :id='getId(counter, index, "opp")'></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="game.js"></script>
+</body>
+
+</html>
