@@ -3,16 +3,20 @@
 
 <head>
     <title>Game View</title>
+    <link href="https://fonts.googleapis.com/css?family=Play" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="main.css">
 </head>
 
 <body>
-    <div id="app">
-        <h1>Welcome Player</h1>
+    <div id="app" class="container">
+        <div class="headlineAndTableContainer">
+        <h1 class="headline">Game View</h1>
         <!-- <h2>{{gameInfo.gamePlayers[0].player.username}} vs {{gameInfo.gamePlayers[1].player.username}}</h2> -->
-        <h2 id="nameDisplay"></h2>
+        
         <div class="tablesContainer">
             <div class="individualTable">
+                    <h2 id="nameDisplayPL"></h2>
+                <div>
                 <table id="tablePlayer">
                     <tbody>
                         <tr class="gpRow">
@@ -25,7 +29,10 @@
                     </tbody>
                 </table>
             </div>
+            </div>
             <div class="individualTable">
+                    <h2 id="nameDisplayOPP"></h2>
+                <div>
                 <table id="tableOpponent">
                     <tbody>
                         <tr class="gpRow">
@@ -38,8 +45,10 @@
                     </tbody>
                 </table>
             </div>
+            </div>
         </div>
 
+    </div>
     </div>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="game.js"></script>

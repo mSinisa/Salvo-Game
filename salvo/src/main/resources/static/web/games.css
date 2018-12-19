@@ -1,0 +1,34 @@
+body{
+    font-family: 'Play', sans-serif;
+}
+
+.bodyContainer {
+    background: url("images/3840x2160-2626157-world-of-warships-4k-best-wallpapers-hd-for-desktop.jpg");
+    height: 100vh;
+    background-size: cover;
+    background-position: top;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.headline{
+    text-align: center;
+    margin: 5vh;
+}
+
+.headlineAndTableContainer{
+    width: 70%;
+    height: 100vh;
+    background-color: rgba(221, 233, 235, 0.733);
+  
+}
+
+.tableContainer{
+    width:80%;
+  margin: auto;
+}
+
+.tableHead{
+    background-color:  rgba(188, 210, 214, 0.897);
+}

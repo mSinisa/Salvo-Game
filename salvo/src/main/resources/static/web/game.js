@@ -94,7 +94,8 @@ var app = new Vue({
             for (var i = 0; i < this.gameInfo.gamePlayers.length; i++) {
                 names.push(this.gameInfo.gamePlayers[i]["player"]["username"]);
             }
-            document.getElementById("nameDisplay").innerHTML = `${names[0]} vs ${names[1]}`
+            document.getElementById("nameDisplayPL").innerHTML = `${names[0]} `;
+            document.getElementById("nameDisplayOPP").innerHTML = ` ${names[1]}`;
         }
 
     },

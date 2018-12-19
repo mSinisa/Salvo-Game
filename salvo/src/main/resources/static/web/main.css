@@ -1,3 +1,29 @@
+html, body{
+    margin:0;
+}
+
+.headlineAndTableContainer{
+    width:90%;
+    height: 100vh;
+    background-color: rgba(221, 233, 235, 0.171);
+    margin:auto;
+}
+
+.container{
+    font-family: 'Play', sans-serif;
+    background-image: url("images/652228.jpg");
+    height: 100vh;
+    background-size: cover;
+    overflow-y: scroll;
+    margin: 0;
+}
+
+.headline{
+    text-align: center;
+    padding: 3vh 0 0 0;
+    margin:0;
+}
+
 .tablesContainer{
   display: flex;
   flex-direction: row;
@@ -6,44 +32,51 @@
 .individualTable{
     width:50%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
 
 }
 
 .gridBox{
 height: 30px;
 width:30px;
-background-color: steelblue;
+background-color: rgba(217, 221, 224, 0.137);
 /* border:2px solid red; */
 text-align: center;
 margin: 0;
-border: 2px solid rgb(90, 90, 160);
+border: 2px solid rgb(206, 206, 209);
 }
 
 .shipLocation{
-    background-color: blueviolet;
+    background-color: rgba(48, 41, 54, 0.959);
 }
 
 table{
     border-spacing: 0;
-    border: 2px solid rgb(90, 90, 160);
+    background-color: rgba(217, 221, 224, 0.315);
+    border: 2px solid rgb(206, 206, 209);
 }
 
 .salvoHit{
-    width: 25px;
-  height: 25px;
-  /* border-radius: 50%; */
+    width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border:1px solid gray;
   text-align: center;
+  background: rgba(116, 24, 47, 0.644);
+  /* border-radius: 50%; */
+  /* text-align: center;
   /* background: red; */
-  background-image: url("images/a6819122e3d5cd56dd858b7b79c323a3.png");
-  background-size: cover;
-}
+  /* background-image: url("images/a6819122e3d5cd56dd858b7b79c323a3.png");
+  background-size: cover; */
+} 
 
 .salvoMiss{
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     text-align: center;
-    background: rgb(136, 205, 236);
+    background: rgba(136, 204, 236, 0.644);
 }
 

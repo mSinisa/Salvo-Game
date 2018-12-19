@@ -33,8 +33,8 @@ var app = new Vue ({
             var players=[];
                for(var i= 0; i<this.games.length; i++){
                    for(var j=0; j<this.games[i]["gamePlayers"].length; j++){
-                       console.log(this.games[i]["gamePlayers"][j]["player"]["username"]);
-                       console.log('early ', players);
+                    //    console.log(this.games[i]["gamePlayers"][j]["player"]["username"]);
+                    //    console.log('early ', players);
                        var score;
                        for (var k = 0; k < this.games[i]["scores"].length; k++){
                            if(this.games[i]["scores"][k]["playerID"] == this.games[i]["gamePlayers"][j]["player"]["id"]){
@@ -52,7 +52,7 @@ var app = new Vue ({
                                loses = 1;
                            }
                        if(players.some(function(el){
-                           console.log(app.games[0]);
+                        //    console.log(app.games[0]);
                            
                            return el.name == app.games[i]["gamePlayers"][j]["player"]["username"]
                        })){
