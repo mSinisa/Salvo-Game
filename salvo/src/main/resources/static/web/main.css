@@ -11,9 +11,10 @@ html, body{
 
 .container{
     font-family: 'Play', sans-serif;
-    background-image: url("images/652228.jpg");
+    background-image: url("images/warship.jpg");
     height: 100vh;
     background-size: cover;
+    background-position: 10% 10%;
     overflow-y: scroll;
     margin: 0;
 }
@@ -54,17 +55,18 @@ border: 2px solid rgb(206, 206, 209);
 
 table{
     border-spacing: 0;
-    background-color: rgba(217, 221, 224, 0.315);
+    background-color: rgba(217, 221, 224, 0.37);
     border: 2px solid rgb(206, 206, 209);
 }
 
 .salvoHit{
-    width: 20px;
-  height: 20px;
+    width: 25px;
+  height: 25px;
   border-radius: 50%;
   border:1px solid gray;
   text-align: center;
   background: rgba(116, 24, 47, 0.644);
+  margin: auto;
   /* border-radius: 50%; */
   /* text-align: center;
   /* background: red; */
@@ -73,10 +75,12 @@ table{
 } 
 
 .salvoMiss{
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     border-radius: 50%;
     text-align: center;
+    margin: auto;
+    border:1px solid gray;
     background: rgba(136, 204, 236, 0.644);
 }
 

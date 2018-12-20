@@ -77,9 +77,14 @@ var app = new Vue ({
                        }
                  
                    }
-               }    
-           console.log(players);
-           return players;
+               }   
+               console.log(players); 
+               return players.sort(function (a, b) {
+                return b["total"] - a["total"];
+              }).sort(function (a, b) {
+                return b["wins"] - a["wins"];
+              });
+        
            }
     },
 

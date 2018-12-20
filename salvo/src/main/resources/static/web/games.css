@@ -20,7 +20,7 @@ body{
 .headlineAndTableContainer{
     width: 70%;
     height: 100vh;
-    background-color: rgba(221, 233, 235, 0.733);
+    background-color: rgba(221, 233, 235, 0.74);
   
 }
 
@@ -30,5 +30,5 @@ body{
 }
 
 .tableHead{
-    background-color:  rgba(188, 210, 214, 0.897);
+    background-color:  rgba(188, 210, 214, 0.61);
 }

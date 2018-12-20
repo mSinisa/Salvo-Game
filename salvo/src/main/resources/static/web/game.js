@@ -73,14 +73,17 @@ var app = new Vue({
                             //k  is showing location of each salvo for Player
                             var salvoLocationPl = "opp" + this.salvos[turn][gpId][k];
                             //make the Pl salvo location equal to the grid ID 
-                            document.getElementById(salvoLocationPl).classList.add("salvoHit");
+                            document.getElementById(salvoLocationPl).innerHTML="<div class='salvoHit'></div>";
+                            // document.getElementById(salvoLocationPl).classList.add("salvoHit");
                         } else {
                             // k is showing location of each salvo for Opponent
                             var salvoLocationOpp = "pl" + this.salvos[turn][gpId][k];
                             if (document.getElementById(salvoLocationOpp).classList.contains("shipLocation")) {
-                                document.getElementById(salvoLocationOpp).classList.add("salvoHit");
+                                document.getElementById(salvoLocationOpp).innerHTML="<div class='salvoHit'></div>";
+                                // document.getElementById(salvoLocationOpp).classList.add("salvoHit");
                             } else {
-                                document.getElementById(salvoLocationOpp).classList.add("salvoMiss");
+                                document.getElementById(salvoLocationOpp).innerHTML="<div class='salvoMiss'></div>";
+                                // document.getElementById(salvoLocationOpp).classList.add("salvoMiss");
                             }
                         }
                     }
