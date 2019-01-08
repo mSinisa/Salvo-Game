@@ -1,52 +1,70 @@
 <!DOCTYPE HTML>
 <html lang="en">
+
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Leaderboard</title>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-<link href="https://fonts.googleapis.com/css?family=Play" rel="stylesheet">
-<link type="text/css" rel="stylesheet" href="games.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Play" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="games.css">
 </head>
 
 <body>
-<div id="app" class="container-flow bodyContainer">
-<div class="headlineAndTableContainer">
-    <h1 class="headline">Battleship Leaderboard</h1>
-<div>
-<table class="table table-striped table-hover tableContainer">
-    <thead class="tableHead">
-        <th>Player</th>
-        <th>Total</th>
-        <th>Won</th>
-        <th>Lost</th>
-        <th>Tied</th>
-    </thead>
-    <tbody>
-        <tr v-for="player in getLeaderboardInfo">
-            <td>{{player.name}}</td>
-            <td>{{player.total}}</td>
-            <td>{{player.wins}}</td>
-            <td>{{player.loses}}</td>
-            <td>{{player.ties}}</td>
-        </tr>
-    </tbody>
-</table>
-</div>
-</div>
+    <div id="app" class="container-flow bodyContainer">
 
-<!-- <ol  type="1">
-    <li v-for="game in games">{{game.created}}, <span>Players:</span>
-        <span v-for="gamePlayer in game.gamePlayers">{{gamePlayer.player.username}}; </span>
-    </li>
-</ol> -->
+        <div class="headlineAndTableContainer">
+            <h2 id="usernameDisplay" v-if="usernameDisplay">{{currentPlayer.username}}</h2>
+            <h1 class="headline">Battleship Leaderboard</h1>
+            <div>
+                
+                <form id="loginForm" onsubmit="return false" v-show="!usernameDisplay">
+                    <label>Name: <input type="text" name="username" v-model="username" required></label>
+                    <label>Password: <input type="password" name="password" v-model="password" required></label>
+                    <button v-on:click="logIn()">Log in</button>
+                    <button v-on:click="register()">Register</button>
+                </form>
 
+                <form id="logoutForm" onsubmit="return false" v-show="usernameDisplay">
+                    <button v-on:click="logOut()">Log out</button>
+                </form>
 
+                <table class="table table-striped table-hover tableContainer">
+                    <thead class="tableHead">
+                        <th>Player</th>
+                        <th>Total</th>
+                        <th>Won</th>
+                        <th>Lost</th>
+                        <th>Tied</th>
+                    </thead>
+                    <tbody>
+                        <tr v-for="player in getLeaderboardInfo">
+                            <td>{{player.name}}</td>
+                            <td>{{player.total}}</td>
+                            <td>{{player.wins}}</td>
+                            <td>{{player.loses}}</td>
+                            <td>{{player.ties}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-</div>
-<script src="https://unpkg.com/vue/dist/vue.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-<script src="games.js"></script>
+            <div class="listOfAllGames">
+                <div class="individualGame"></div>
+            </div>
+            <a v-show="usernameDisplay" v-for="gamePlayerID in getGamePlayerIdsOfCurrentPlayers()" :href="'game.html?gp=' + gamePlayerID ">Back to game {{gamePlayerID}}</a>
+        </div>
+
+    </div>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script src="games.js"></script>
 </body>
+
 </html>

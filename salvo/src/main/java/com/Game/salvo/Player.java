@@ -9,16 +9,15 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.FetchType;
 import java.util.Set;
-import javax.validation.constraints.Email;
 
 @Entity
 public class Player {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private String Username;
+    private String userName;
+    private String password;
 
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
@@ -42,20 +41,29 @@ public class Player {
     }
 
 
-    public Player(String username) {
-        this.Username = username;
+    public Player(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
     }
 
     public long getId() {
         return id;
     }
 
-    public String getUsername() {
-        return Username;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUsername(String username) {
-        Username = username;
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @JsonIgnore
@@ -74,7 +82,7 @@ public class Player {
     @Override
     public String toString() {
         return "Player{" +
-                "Username=" + Username +
+                "userName=" + userName +
                 '}';
     }
 }

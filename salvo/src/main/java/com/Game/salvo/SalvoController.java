@@ -1,12 +1,13 @@
 package com.Game.salvo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import org.springframework.web.servlet.mvc.Controller;
 
 @RestController
 @RequestMapping("/api")
@@ -15,13 +16,27 @@ public class SalvoController {
     @Autowired
     private GameRepository gameRepo;
 
-    @RequestMapping("/games")
-    public List<Object> getGameInfo() {
-        return gameRepo.findAll().stream()
-                .map(game -> getGameInfo(game))
-                .collect(Collectors.toList());
-    }
+    @Autowired
+    private PlayerRepository playerRepository;
 
+
+    @RequestMapping("/games")
+
+    public Map<String, Object> getGameInfo(Authentication authentication) {
+        Map<String, Object> gameInformation= new HashMap<>();
+        if(!isGuest(authentication)){
+            //if the user is logged in
+           Player player = playerRepository.findByUserName(authentication.getName());
+            gameInformation.put("player", getPlayerInfo(player));
+        } else {
+            gameInformation.put("player", "Guest");
+        }
+
+       gameInformation.put("games", gameRepo.findAll().stream()
+               .map(game -> getGameInfo(game))
+               .collect(Collectors.toList()));
+        return gameInformation;
+    }
 
     public Map<String, Object> getGameInfo(Game game) {
         Map<String, Object> gameInfo = new HashMap<>();
@@ -39,28 +54,9 @@ public class SalvoController {
         return gameInfo;
     }
 
-//    public Map<String, Object> getScoresOfGame (Score score){
-//        Map<String,Object> scoreInfo= new LinkedHashMap<>();
-//        scoreInfo.put("score", score.getScore());
-//        scoreInfo.put("gameID", score.getGame().getId());
-//        scoreInfo.put("playerID", score.getPlayer().getId());
-//        return scoreInfo;
-//    }
-//
-//    public Map<String, Object> getBothGamePlayers(GamePlayer gamePlayer){
-//        Map<String, Object> detailsOfGamePlayer = new HashMap<>();
-//        detailsOfGamePlayer.put("gamePlayer_id", gamePlayer.getId());
-//        return detailsOfGamePlayer;
-//    }
-
-
     public Map<String, Object> getGamePlayers(GamePlayer gamePlayer){
         Map<String,Object> gamePlayerDetail = new HashMap<>();
         gamePlayerDetail.put("gamePlayer_id", gamePlayer.getId());
-//        gamePlayerDetail.put("scores", gamePlayer.getGame().getScores().stream()
-//                .map(score -> getScoresOfGame(score))
-//                .collect(Collectors.toList())
-//        );
         gamePlayerDetail.put("player", getPlayerInfo(gamePlayer.getPlayer()));
         return gamePlayerDetail;
     }
@@ -75,7 +71,7 @@ public class SalvoController {
     Map<String, Object> getPlayerInfo(Player player){
         Map<String, Object> playerDetail= new HashMap<>();
         playerDetail.put("id", player.getId());
-        playerDetail.put("username", player.getUsername());
+        playerDetail.put("username", player.getUserName());
         return playerDetail;
     }
 
@@ -83,25 +79,36 @@ public class SalvoController {
     private GamePlayerRepository gamePlayerRepository;
 
     @RequestMapping("/game_view/{gameID}")
-    public Map<String, Object> getGameView(@PathVariable long gameID){
-        GamePlayer currentGamePlayer = gamePlayerRepository.getOne(gameID);
-        System.out.println(currentGamePlayer);
-        Map<String, Object> gameViewInfo= new LinkedHashMap<>();
-        gameViewInfo.put("created", currentGamePlayer.getGame().getDate());
-        gameViewInfo.put("id", currentGamePlayer.getGame().getId());
-        gameViewInfo.put("gamePlayers", currentGamePlayer.getGame().getGamePlayers().stream()
-                    .map(gamePlayer -> getGamePlayers(gamePlayer))
-                    .collect(Collectors.toList())
-        );
-        gameViewInfo.put("ships", currentGamePlayer.getShips().stream()
+    public ResponseEntity<Map<String, Object>> getGameView(@PathVariable long gameID, Authentication authentication){
+        Map<String, Object> gameViewInfo = new LinkedHashMap<>();
+        if(!isGuest(authentication)) {
+            Player player = playerRepository.findByUserName(authentication.getName());
+            GamePlayer currentGamePlayer = gamePlayerRepository.getOne(gameID);
+            System.out.println(currentGamePlayer);
+
+            if(player.getId() == currentGamePlayer.getPlayer().getId()){
+                System.out.println("they are equal");
+                gameViewInfo.put("created", currentGamePlayer.getGame().getDate());
+                gameViewInfo.put("id", currentGamePlayer.getGame().getId());
+                gameViewInfo.put("gamePlayers", currentGamePlayer.getGame().getGamePlayers().stream()
+                        .map(gamePlayer -> getGamePlayers(gamePlayer))
+                        .collect(Collectors.toList())
+                );
+                gameViewInfo.put("ships", currentGamePlayer.getShips().stream()
                         .map(ship -> getShipInfo(ship))
                         .collect(Collectors.toList()));
-        gameViewInfo.put("salvos", getSalvoInfo(currentGamePlayer.getGame().getGamePlayers().stream()
-                                    .map(gamePlayer -> gamePlayer.getSalvos()).flatMap(salvoSet -> salvoSet.stream())
-                                    .collect(Collectors.toSet()))
-        );
-
-     return gameViewInfo;
+                gameViewInfo.put("salvos", getSalvoInfo(currentGamePlayer.getGame().getGamePlayers().stream()
+                        .map(gamePlayer -> gamePlayer.getSalvos()).flatMap(salvoSet -> salvoSet.stream())
+                        .collect(Collectors.toSet()))
+                );
+                return new ResponseEntity<>(gameViewInfo, HttpStatus.CREATED);
+            }else{
+                System.out.println("different");
+                return new ResponseEntity<>(makeMap("error", "Not allowed to view opponents game"), HttpStatus.FORBIDDEN);
+            }
+        } else {
+            return new ResponseEntity<>(makeMap("error", "You are not logged in"), HttpStatus.UNAUTHORIZED);
+        }
     }
 
     public Map<String, Object> getShipInfo(Ship ship){
@@ -110,8 +117,6 @@ public class SalvoController {
         shipTypeAndLocations.put("locations", ship.getShipLocations() );
     return shipTypeAndLocations;
     }
-
-
 
     Map<Integer, Map> getSalvoInfo(Set<Salvo> salvos){
         Map<Integer,Map> salvosByTurn= new LinkedHashMap<>();
@@ -128,45 +133,32 @@ public class SalvoController {
                 salvoDetails.put(salvo.getGamePlayer().getId(), salvo.getSalvoLocations());
             }
         }
-
         return salvosByTurn;
     }
 
-//        GamePlayer currentGamePlayer = gamePlayerRepository.getOne(gameID);
-//        System.out.println(currentGamePlayer);
-//        Map<String, Object> gameViewInfo= new LinkedHashMap<>();
-//        gameViewInfo.put("created", currentGamePlayer.getGame().getDate());
-//        gameViewInfo.put("id", currentGamePlayer.getGame().getId());
-//        gameViewInfo.put("gamePlayers", currentGamePlayer.getGame().getGamePlayers().stream()
-//                    .map(gamePlayer -> getGamePlayers(gamePlayer))
-//                    .collect(Collectors.toList())
-//        );
-//        gameViewInfo.put("ships", currentGamePlayer.getShips().stream()
-//                        .map(ship -> getShipInfo(ship))
-//                        .collect(Collectors.toList()));
-//
-//        gameViewInfo.put("salvos", currentGamePlayer.getSalvos().stream()
-//                        .map(salvo -> getSalvoInfo(salvo))
-//                        .collect(Collectors.toList()));
-//
-//     return gameViewInfo;
-//    }
-//
-//    public Map<String, Object> getShipInfo(Ship ship){
-//        Map<String, Object> shipTypeAndLocations= new LinkedHashMap<>();
-//        shipTypeAndLocations.put("type", ship.getShipType());
-//        shipTypeAndLocations.put("locations", ship.getShipLocations() );
-//
-//    return shipTypeAndLocations;
-//    }
-//
-//    public Map<String, Object> getSalvoInfo (Salvo salvo){
-//        Map<String, Object> salvoTurnAndLocations = new LinkedHashMap<>();
-//        salvoTurnAndLocations.put("turn", salvo.getTurn());
-//        salvoTurnAndLocations.put("gamePlayer", salvo.getGamePlayer().getId());
-//        salvoTurnAndLocations.put("locations", salvo.getSalvoLocations());
-//
-//        return salvoTurnAndLocations;
-//    }
+    @RequestMapping(path ="/players", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> createNewPlayer(String username, String password){
+        //add the code for empty strings
+        if(username == "" || username == " " || username== null) {
+            return new ResponseEntity<>(makeMap("error", "You did not enter a username"), HttpStatus.FORBIDDEN);
+        } else {
+            if (playerRepository.findByUserName(username) == null) {
+                Player newPlayer = new Player(username, password);
+                playerRepository.save(newPlayer);
+                return new ResponseEntity<>(makeMap("username", newPlayer.getUserName()), HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(makeMap("error", "This username already exists, please try with a different one"), HttpStatus.FORBIDDEN);
+            }
+        }
+    }
 
+    private boolean isGuest(Authentication authentication) {
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
+    }
+
+    private Map<String, Object> makeMap(String key, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        return map;
+    }
 }
