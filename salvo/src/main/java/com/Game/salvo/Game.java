@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.FetchType;
+import java.util.HashSet;
 import java.util.Set;
 import javax.validation.constraints.Email;
 import java.util.Date;
@@ -24,7 +25,7 @@ public class Game {
     private Date date;
 
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
-    Set<GamePlayer> gamePlayers;
+    Set<GamePlayer> gamePlayers= new HashSet<>();
 
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
     Set<Score> scores;

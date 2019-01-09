@@ -75,6 +75,20 @@ public class SalvoController {
         return playerDetail;
     }
 
+    @RequestMapping(path = "/games", method = RequestMethod.POST)
+    public ResponseEntity<Map<String,Object>> createGame(Authentication authentication) {
+        if(!isGuest(authentication)){
+            Player player = playerRepository.findByUserName(authentication.getName());
+            Game newGame= new Game();
+            gameRepo.save(newGame);
+            GamePlayer newGamePlayer= new GamePlayer(player, newGame);
+            gamePlayerRepository.save(newGamePlayer);
+            return new ResponseEntity<>(makeMap("gpID", newGamePlayer.getId()), HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(makeMap("error", "you are not logged in"), HttpStatus.UNAUTHORIZED);
+        }
+    }
+
     @Autowired
     private GamePlayerRepository gamePlayerRepository;
 
@@ -149,6 +163,30 @@ public class SalvoController {
             } else {
                 return new ResponseEntity<>(makeMap("error", "This username already exists, please try with a different one"), HttpStatus.FORBIDDEN);
             }
+        }
+    }
+
+    @RequestMapping(path ="/api/game/{gameID}/players", method = RequestMethod.POST)
+    public ResponseEntity<Map<String,Object>> joinGame(@PathVariable long gameID, Authentication authentication){
+        if(!isGuest(authentication)){
+            Player player=playerRepository.findByUserName(authentication.getName());
+            if(gameRepo.getOne(gameID) == null){
+                //gets the game with that ID
+                //if no game with this ID- it sends a Forbidden response with descriptive text, such as "No such game"
+                return new ResponseEntity<>(makeMap("error", "No such game"), HttpStatus.FORBIDDEN);
+            } else {
+                //if the game has 2 players send FORBIDDEN and text: game is full
+                if(gameRepo.getOne(gameID).getGamePlayers().size() == 2){
+                    return new ResponseEntity<>(makeMap("error", "game is full"), HttpStatus.FORBIDDEN);
+                } else {
+                    //create and save a new game player, with this game and the current user
+                    GamePlayer newGamePlayer= new GamePlayer(player, gameRepo.getOne(gameID));
+                    return new ResponseEntity<>(makeMap("gpID", newGamePlayer.getId()), HttpStatus.CREATED);
+                }
+            }
+        }else{
+            //if no current user - Unauthorized response
+            return new ResponseEntity<>(makeMap("error", "not logged in"), HttpStatus.UNAUTHORIZED);
         }
     }
 

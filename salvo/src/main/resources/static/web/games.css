@@ -2,13 +2,19 @@ body{
     font-family: 'Play', sans-serif;
 }
 
+.noMargin{
+margin: 0;
+}
+
 .bodyContainer {
     background: url("images/3840x2160-2626157-world-of-warships-4k-best-wallpapers-hd-for-desktop.jpg");
     height: 100vh;
+    overflow-y: scroll;
     background-size: cover;
     background-position: top;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    /* justify-content: center; */
     align-items: center;
 }
 
@@ -19,13 +25,14 @@ body{
 
 .headlineAndTableContainer{
     width: 70%;
-    height: 100vh;
+    /* height: 100vh; */
     background-color: rgba(221, 233, 235, 0.74);
   
 }
 
 .tableContainer{
     width:80%;
+    /* height: 100vh; */
   margin: auto;
 }
 

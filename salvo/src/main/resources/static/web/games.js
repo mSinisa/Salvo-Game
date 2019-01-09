@@ -12,7 +12,8 @@ var app = new Vue({
                 password: "",
                 loginForm: true,
                 logoutForm: false,
-                usernameDisplay:false
+                usernameDisplay:false,
+                gpID:""
 
             },
 
@@ -64,8 +65,6 @@ var app = new Vue({
                             console.log('Request failure: ', error);
                             alert("Wrong user name or password");
                         })
-                      
-
                 },
 
                 logOut: function () {
@@ -83,6 +82,7 @@ var app = new Vue({
                             app.loginForm = true;
                             app.emptyTextInputs();
                             app.usernameDisplay = false;
+                            window.location.reload();
                         })
                         .catch(function (error) {
                             console.log('Request failure: ', error);
@@ -114,7 +114,6 @@ var app = new Vue({
                             app.logoutForm = true;
                             app.usernameDisplay = true;
                             app.logIn();
-                            // window.location.reload();
                             }else{
                                 alert("Wrong username or password, try again");                              
                             }
@@ -129,18 +128,72 @@ var app = new Vue({
                     this.password = "";
                 },
 
-                getGamePlayerIdsOfCurrentPlayers: function(){
+                getGamePlayerIdOfCurrentPlayers: function(game){
                     var currentPlayerID=this.currentPlayer["id"];
-                    var gamePlayerIdsOfCurrentPlayer=[];
-                    for(var i=0; i<this.games.length; i++){
-                        for(var j=0; j<this.games[i]["gamePlayers"].length;j++){
-                            if(currentPlayerID == this.games[i]["gamePlayers"][j]["player"]["id"]){
-                                gamePlayerIdsOfCurrentPlayer.push(this.games[i]["gamePlayers"][j]["gamePlayer_id"]);
+                        for(var i=0; i<game["gamePlayers"].length;i++){
+                            if(currentPlayerID == game["gamePlayers"][i]["player"]["id"]){
+                                var gamePlayerIdOfCurrentPlayer=game["gamePlayers"][i]["gamePlayer_id"];
                             }
                         }
+                    return gamePlayerIdOfCurrentPlayer;
+                },
+
+                playerIsInGame: function(game){
+                    var isInGame = false;
+                    var currentPlayerID=this.currentPlayer["id"];
+                    for(var i=0; i<game["gamePlayers"].length;i++){
+                        if(currentPlayerID == game["gamePlayers"][i]["player"]["id"]){
+                        isInGame = true;
+                        }
                     }
-                    return gamePlayerIdsOfCurrentPlayer;
-                }
+                    return isInGame;
+                },
+
+                createNewGame: function(){
+                    fetch("/api/games", {
+                        credentials: 'include',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        method: 'POST'
+                    })
+                    .then(function (response) {
+                        console.log(response);
+                        return response.json();
+                    })
+                    .then(function (data){
+                        console.log('New: ', data);
+                        app.gpID = data.gpID;
+                        // window.location.reload();
+                        window.location='game.html?gp='+ app.gpID;                        
+                    })      
+                    .catch(function (error) {        });
+                },
+
+                // joinGame: function(){
+                //     var joinGameLink= document.getElementById("joinGameLink");
+                //     var gameID= joinGameLink.dataset.gameID;
+                //     console.log(gameID);
+                //     fetch("/api/game/"+ gameID + "/players", {
+                //         credentials: 'include',
+                //         headers: {
+                //             'Accept': 'application/json',
+                //             'Content-Type': 'application/x-www-form-urlencoded'
+                //         },
+                //         method: 'POST'
+                //     })
+                //     .then(function (response) {
+                //         console.log(response);
+                //         return response.json();
+                //     })
+                //     .then(function (json) {
+                //         console.log(json);
+                //     })
+                //     .catch(function (error) {        });
+
+                // }            
+            
             },
 
                 computed: {
