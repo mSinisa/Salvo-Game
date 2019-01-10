@@ -212,12 +212,6 @@ public class SalvoApplication {
 			scoreRepository.save(scr3);
 			scoreRepository.save(scr4);
 
-
-			System.out.println(g1.getGamePlayers() + "bla bvla");
-			System.out.println(g1.getGamePlayers().size());
-//			System.out.println(g2.gamePlayers.size() + " test");
-			System.out.println(gp1);
-
 		};
 	}
 

@@ -99,7 +99,30 @@ var app = new Vue({
             }
             document.getElementById("nameDisplayPL").innerHTML = `${names[0]} `;
             document.getElementById("nameDisplayOPP").innerHTML = ` ${names[1]}`;
-        }
+        },
+
+        postShips: function(){
+            fetch("/api/games/players/" + this.getGpInUrl() + "/ships", {
+                credentials: "include",
+                headers: {
+                  //  'Accept':'application/json',
+                    'Content-type':'application/json'
+                },
+                method:'POST',
+                body: JSON.stringify([{ "shipType": "destroyer", "shipLocations": ["A1", "B1", "C1"] },
+                { "shipType": "patrol boat", "shipLocations": ["H5", "H6"] }])
+            })
+            .then(function (response) {
+                console.log(response);
+                return response.json();
+            }).then(function (json) {
+                console.log(json);
+            })
+            .catch(function (error) {
+                console.log('Request failure: ', error);
+            })
+
+        },
 
     },
 

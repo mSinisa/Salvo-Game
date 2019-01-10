@@ -63,8 +63,10 @@
                                 <td>{{game.gamePlayers[0].player.username}}</td>                              
                                 <td v-if="game.gamePlayers[1]">{{game.gamePlayers[1].player.username}}</td>
                                 <td v-else>. . .</td>
-                                <td v-if="playerIsInGame(game)"><a :href="'game.html?gp=' + getGamePlayerIdOfCurrentPlayers(game)">Back to game {{getGamePlayerIdOfCurrentPlayers(game)}} </a></td>
-                                <td v-else><a id="joinGameLink" >Join Game {{game.game_id}} </a></td>
+                                <td v-if="playerIsInGame(game)"><a :href="'game.html?gp=' + getGamePlayerIdOfCurrentPlayers(game)">Back to game {{game.game_id}} </a></td>
+                                <td v-else-if="userCanJoinGame(game)" ><a href="#" v-on:click="joinGame(game)">Join Game {{game.game_id}}</a></td> 
+                                <!-- :href="'game.html?gp=' + getGpId()" -->
+                                <td v-else><a  id="joinGameLink" >. . .</a></td>
                                 <!-- data-gameID="game.game_id" v-on:click="joinGame()" -->
                              
                             </tr>

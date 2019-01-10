@@ -13,7 +13,8 @@ var app = new Vue({
                 loginForm: true,
                 logoutForm: false,
                 usernameDisplay:false,
-                gpID:""
+                gpID:"",
+                gpId:"" // from Join Game method
 
             },
 
@@ -171,28 +172,48 @@ var app = new Vue({
                     .catch(function (error) {        });
                 },
 
-                // joinGame: function(){
-                //     var joinGameLink= document.getElementById("joinGameLink");
-                //     var gameID= joinGameLink.dataset.gameID;
-                //     console.log(gameID);
-                //     fetch("/api/game/"+ gameID + "/players", {
-                //         credentials: 'include',
-                //         headers: {
-                //             'Accept': 'application/json',
-                //             'Content-Type': 'application/x-www-form-urlencoded'
-                //         },
-                //         method: 'POST'
-                //     })
-                //     .then(function (response) {
-                //         console.log(response);
-                //         return response.json();
-                //     })
-                //     .then(function (json) {
-                //         console.log(json);
-                //     })
-                //     .catch(function (error) {        });
+                
 
-                // }            
+                joinGame: function(game){
+                    // var joinGameLink= document.getElementById("joinGameLink");
+                    var gameID= game["game_id"];
+                    
+                    fetch("/api/game/"+ gameID + "/players", {
+                        credentials: 'include',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        method: 'POST'
+                    })
+                    .then(function (response) {
+                        console.log(response);
+                        return response.json();
+                    })
+                    .then(function (json) {
+                        console.log(json);
+                        app.gpId=json.gpID;
+                        window.location = "http://localhost:8080/web/game.html?gp=" + app.gpId;
+                    })
+                    .catch(function (error) {        });
+
+                },
+                
+                userCanJoinGame: function(game){
+                    var canJoin = false;
+                    var currentPlayerID=this.currentPlayer["id"];
+                    for(var i=0; i<game["gamePlayers"].length;i++){
+                        if(game["gamePlayers"].length == 2){
+
+                        } else {
+                              if(this.playerIsInGame(game)) {
+                            } else {
+                                canJoin = true;
+                            }
+                        }
+                    }
+                    return canJoin;
+                }
             
             },
 
@@ -262,22 +283,4 @@ var app = new Vue({
 
             });
 
-
-
-
-        //
-        //fetch("/api/login", {
-        //        credentials: 'include',
-        //        headers: {
-        //            'Accept' : 'application/json',
-        //            'Content-Type': 'application/x-www-form-urlencoded'
-        //        },
-        //        method: 'POST',
-        //        body: 'username=JackBauer&password=24'
-        //    })
-        //    .then(function (data) {
-        //        console.log('Request success: ', data);
-        //    })
-        //    .catch(function (error) {
-        //        console.log('Request failure: ', error);
-        //    });
+        

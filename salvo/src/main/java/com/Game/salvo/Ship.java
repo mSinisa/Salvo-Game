@@ -56,9 +56,6 @@ public class Ship {
     public Ship(String type, List<String> shipLocations) {
         this.shipType= type;
         this.shipLocations= shipLocations;
-
-
-
     }
 
     public void setShipLocations(List<String> shipLocations) {
