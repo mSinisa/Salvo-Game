@@ -84,3 +84,16 @@ table{
     background: rgba(136, 204, 236, 0.644);
 }
 
+
+.boxForShipFree{
+    background-color: greenyellow;
+}
+
+.boxForShipFree:active{
+    background-color: olivedrab;
+}
+
+.boxShipInUse{
+    background-color: rgba(148, 13, 13, 0.781)
+}
+

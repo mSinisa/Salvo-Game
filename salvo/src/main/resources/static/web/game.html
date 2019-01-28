@@ -4,6 +4,8 @@
 <head>
     <title>Game View</title>
     <link href="https://fonts.googleapis.com/css?family=Play" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
     <link type="text/css" rel="stylesheet" href="main.css">
 </head>
 
@@ -16,6 +18,28 @@
         <div class="tablesContainer">
             <div class="individualTable">
                     <h2 id="nameDisplayPL"></h2>
+                    <div class="shipsToPlace">
+                        <h5>Carrier</h5>
+                        <button id="carrier" class="btn btn-dark" v-on:click="placing('carrier')" v-show="carrier">Place Ship</button>
+                        <button id="carrierVertical" class="btn btn-success" v-on:click="placing('carrierVertical')" v-show="carrierVertical">Vertical</button>
+                        <button id="cancelCarrier" class="btn btn-danger" v-on:click="cancelShip('carrier')" v-show="cancelCarrier">Cancel placement</button>
+                        <h5>Battle Ship</h5>
+                        <button id="battleShip" class="btn btn-dark" v-on:click="placing('battleShip')" v-show="battleShip">Place Ship</button>
+                        <button id="battleVertical" class="btn btn-success" v-on:click="placing('battleVertical')" v-show="battleVertical">Vertical</button>
+                        <button id="cancelBattleShip" class="btn btn-danger" v-on:click="cancelShip('battle ship')" v-show="cancelBattleShip">Cancel placement</button>                        
+                        <h5>Submarine</h5>
+                        <button id="submarine" class="btn btn-dark" v-on:click="placing('submarine')" v-show="submarine">Place Ship</button>
+                        <button id="submarineVertical" class="btn btn-success" v-on:click="placing('submarineVertical')" v-show="submarineVertical">Vertical</button>
+                        <button id="cancelSubmarine" class="btn btn-danger" v-on:click="cancelShip('submarine')" v-show="cancelSubmarine">Cancel placement</button>                        
+                        <h5>Destroyer</h5>
+                        <button id="destroyer" class="btn btn-dark" v-on:click="placing('destroyer')" v-show="destroyer">Place Ship</button>
+                        <button id="destroyerVertical" class="btn btn-success" v-on:click="placing('destroyerVertical')" v-show="destroyerVertical">Vertical</button>
+                        <button id="cancelDestroyer" class="btn btn-danger" v-on:click="cancelShip('destroyer')" v-show="cancelDestroyer">Cancel placement</button>                        
+                        <h5>Patrol Boat</h5>
+                        <button id="patrolBoat" class="btn btn-dark" v-on:click="placing('patrolBoat')" v-show="patrolBoat">Place Ship</button>
+                        <button id="partolVertical" class="btn btn-success" v-on:click="placing('partolVertical')" v-show="partolVertical">Vertical</button>
+                        <button id="cancelPatrolBoat" class="btn btn-danger" v-on:click="cancelShip('patrol boat')" v-show="cancelPatrolBoat">Cancel placement</button>                        
+                    </div>
                 <div>
                 <table id="tablePlayer">
                     <tbody>
@@ -24,7 +48,7 @@
                         </tr>
                         <tr v-for="(row, counter) in rows" class="gpRow">
                             <td class="gridBox">{{row}}</td>
-                            <td v-for="(row, index) in rows" class="gridBox" :id='getId(counter, index, "pl")'></td>
+                            <td v-for="(row, index) in rows" class="gridBox boxForShip" :id='getId(counter, index, "pl")'></td>
                         </tr>
                     </tbody>
                 </table>
@@ -51,6 +75,9 @@
     </div>
     </div>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     <script src="game.js"></script>
 </body>
 

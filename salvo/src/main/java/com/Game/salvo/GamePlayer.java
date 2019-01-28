@@ -1,9 +1,7 @@
 package com.Game.salvo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -45,7 +43,6 @@ public class GamePlayer {
     public GamePlayer(Player player, Game game){
         this.player = player;
         this.game = game;
-
     }
 
     public long getId() {
