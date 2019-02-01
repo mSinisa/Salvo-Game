@@ -20,7 +20,7 @@ var app = new Vue({
 
             methods: {
 
-                getData: function () {
+                getData() {
                     fetch(this.url, {
                             method: "GET"
                         })
@@ -36,7 +36,7 @@ var app = new Vue({
                         })
                 },
 
-                logIn: function () {
+                logIn () {
                     if(this.username == "" || this.password == "") {
                         alert("username or password empty");
                         this.emptyTextInputs();
@@ -68,7 +68,7 @@ var app = new Vue({
                         })
                 },
 
-                logOut: function () {
+                logOut () {
                     fetch("/api/logout", {
                             credentials: 'include',
                             headers: {
@@ -90,7 +90,7 @@ var app = new Vue({
                         });
                 },
 
-                register: function () {
+                register () {
                     if(this.username.trim() == "" || this.password.trim() == "") {
                         alert("username or password empty");
                         app.emptyTextInputs();
@@ -124,12 +124,12 @@ var app = new Vue({
                         });
                 },
 
-                emptyTextInputs: function(){
+                emptyTextInputs(){
                     this.username = "";
                     this.password = "";
                 },
 
-                getGamePlayerIdOfCurrentPlayers: function(game){
+                getGamePlayerIdOfCurrentPlayers(game){
                     var currentPlayerID=this.currentPlayer["id"];
                         for(var i=0; i<game["gamePlayers"].length;i++){
                             if(currentPlayerID == game["gamePlayers"][i]["player"]["id"]){
@@ -139,7 +139,7 @@ var app = new Vue({
                     return gamePlayerIdOfCurrentPlayer;
                 },
 
-                playerIsInGame: function(game){
+                playerIsInGame(game){
                     var isInGame = false;
                     var currentPlayerID=this.currentPlayer["id"];
                     for(var i=0; i<game["gamePlayers"].length;i++){
@@ -150,7 +150,7 @@ var app = new Vue({
                     return isInGame;
                 },
 
-                createNewGame: function(){
+                createNewGame(){
                     fetch("/api/games", {
                         credentials: 'include',
                         headers: {
@@ -169,15 +169,15 @@ var app = new Vue({
                         // window.location.reload();
                         window.location='game.html?gp='+ app.gpID;                        
                     })      
-                    .catch(function (error) {        });
+                    .catch(function (error) {  
+                        console.log("Error: " + error);
+                          });
                 },
 
                 
 
-                joinGame: function(game){
-                    // var joinGameLink= document.getElementById("joinGameLink");
-                    var gameID= game["game_id"];
-                    
+                joinGame(game){
+                    var gameID= game["game_id"];                    
                     fetch("/api/game/"+ gameID + "/players", {
                         credentials: 'include',
                         headers: {
@@ -187,43 +187,53 @@ var app = new Vue({
                         method: 'POST'
                     })
                     .then(function (response) {
-                        console.log(response);
                         return response.json();
                     })
                     .then(function (json) {
-                        console.log(json);
                         app.gpId=json.gpID;
                         window.location = "http://localhost:8080/web/game.html?gp=" + app.gpId;
                     })
-                    .catch(function (error) {        });
+                    .catch(function (error) {  
+                        console.log("Error: " + error);
+                          });
 
                 },
                 
-                userCanJoinGame: function(game){
+                userCanJoinGame(game){
                     var canJoin = false;
-                    var currentPlayerID=this.currentPlayer["id"];
+                    if(this.currentPlayer == "Guest"){
+                        canJoin = false;
+                    } else{
                     for(var i=0; i<game["gamePlayers"].length;i++){
                         if(game["gamePlayers"].length == 2){
-
+                            canJoin = false;
                         } else {
                               if(this.playerIsInGame(game)) {
+                                  canJoin= false;
                             } else {
                                 canJoin = true;
                             }
                         }
                     }
+                }
                     return canJoin;
+                },
+
+                isLoggedIn(){
+                    if(this.currentPlayer == "Guest"){
+                        return false;
+                    } else {
+                        return true;
+                    }
                 }
             
             },
 
                 computed: {
-                    getLeaderboardInfo: function () {
+                    getLeaderboardInfo () {
                         var players = [];
                         for (var i = 0; i < this.games.length; i++) {
                             for (var j = 0; j < this.games[i]["gamePlayers"].length; j++) {
-                                //    console.log(this.games[i]["gamePlayers"][j]["player"]["username"]);
-                                //    console.log('early ', players);
                                 var score;
                                 for (var k = 0; k < this.games[i]["scores"].length; k++) {
                                     if (this.games[i]["scores"][k]["playerID"] == this.games[i]["gamePlayers"][j]["player"]["id"]) {
@@ -241,8 +251,6 @@ var app = new Vue({
                                     loses = 1;
                                 }
                                 if (players.some(function (el) {
-                                        //    console.log(app.games[0]);
-
                                         return el.name == app.games[i]["gamePlayers"][j]["player"]["username"]
                                     })) {
                                     var foundIndex = players.findIndex(player => player.name == this.games[i]["gamePlayers"][j]["player"]["username"]);
@@ -255,7 +263,6 @@ var app = new Vue({
                                         players[foundIndex].loses += 1;
                                     }
                                 } else {
-
                                     players.push({
                                         "name": this.games[i]["gamePlayers"][j]["player"]["username"],
                                         "total": score,
@@ -264,10 +271,8 @@ var app = new Vue({
                                         "ties": ties
                                     })
                                 }
-
                             }
                         }
-                        console.log(players);
                         return players.sort(function (a, b) {
                             return b["total"] - a["total"];
                         }).sort(function (a, b) {
@@ -277,10 +282,9 @@ var app = new Vue({
                     }
                 },
 
-                created: function () {
+                created () {
                     this.getData();
                 }
-
             });
 
         

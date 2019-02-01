@@ -14,16 +14,14 @@ public class SalvoController {
 
     @Autowired
     private GameRepository gameRepo;
-
     @Autowired
     private PlayerRepository playerRepository;
-
     @Autowired
     private ShipRepository shipRepository;
-
+    @Autowired
+    private SalvoRepository salvoRepository;
 
     @RequestMapping("/games")
-
     public Map<String, Object> getGameInfo(Authentication authentication) {
         Map<String, Object> gameInformation= new HashMap<>();
         if(!isGuest(authentication)){
@@ -108,7 +106,6 @@ public class SalvoController {
                 currentGamePlayer.addShip(ship);
                 shipRepository.save(ship);
             }
-
             return new ResponseEntity<>(makeMap("success", "added ships"), HttpStatus.CREATED);
         }
     }
@@ -223,5 +220,23 @@ public class SalvoController {
         Map<String, Object> map = new HashMap<>();
         map.put(key, value);
         return map;
+    }
+
+    @RequestMapping(path ="/games/players/{gamePlayerId}/salvos", method = RequestMethod.POST)
+    public ResponseEntity<Map<String,Object>> placeSalvoes (@PathVariable long gamePlayerId, @RequestBody Salvo salvo, Authentication authentication){
+        Player player = playerRepository.findByUserName(authentication.getName());
+        GamePlayer currentGamePlayer= gamePlayerRepository.getOne(gamePlayerId);
+        //there is no current user logged in, or there is no game player with the given ID, or
+        // the current user is not the game player the ID references
+        if(isGuest(authentication) || currentGamePlayer == null || !currentGamePlayer.getPlayer().equals(player)){
+            return new ResponseEntity<>(makeMap("error", "action not allowed"), HttpStatus.UNAUTHORIZED);
+        } else if(gamePlayerRepository.getOne(gamePlayerId).getSalvos().size() != 0){
+            return new ResponseEntity<>(makeMap("error", "you have placed salvos for this turn"), HttpStatus.FORBIDDEN);
+        } else {
+                salvo.setTurn(currentGamePlayer.getLastTurn()+1);
+                currentGamePlayer.addSalvo(salvo);
+                salvoRepository.save(salvo);
+                return new ResponseEntity<>(makeMap("success", "added salvo"), HttpStatus.CREATED);
+        }
     }
 }

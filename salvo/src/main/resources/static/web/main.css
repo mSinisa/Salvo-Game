@@ -59,6 +59,10 @@ table{
     border: 2px solid rgb(206, 206, 209);
 }
 
+.salvo{
+    background: rgba(0, 0, 0, 0.863); 
+}
+
 .salvoHit{
     width: 25px;
   height: 25px;

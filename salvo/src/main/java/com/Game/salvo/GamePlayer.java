@@ -105,4 +105,15 @@ public class GamePlayer {
         this.salvos.add(salvo);
     }
 
+    public Integer getLastTurn(){
+        if(!this.getSalvos().isEmpty()){
+            return this.getSalvos().stream()
+                    .map(salvo1 ->salvo1.getTurn() )
+                    .max((x,y)->Integer.compare(x,y))
+                    .get();
+        }else {
+            return 0;
+        }
+    }
+
 }

@@ -72,8 +72,10 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div v-if="isLoggedIn()" id="newGameSection">
                     <h2>Create a new game</h2>
                     <button class="btn btn-dark" v-on:click="createNewGame()">GO</button>
+                    </div>
             </div>
             </div>
             

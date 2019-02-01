@@ -18,7 +18,7 @@
         <div class="tablesContainer">
             <div class="individualTable">
                     <h2 id="nameDisplayPL"></h2>
-                    <div class="shipsToPlace">
+                    <div class="shipsToPlace" id="shipsToPlace" v-if="ships.length == 0">
                         <h5>Carrier</h5>
                         <button id="carrier" class="btn btn-dark" v-on:click="placing('carrier')" v-show="carrier">Place Ship</button>
                         <button id="carrierVertical" class="btn btn-success" v-on:click="placing('carrierVertical')" v-show="carrierVertical">Vertical</button>
@@ -39,6 +39,12 @@
                         <button id="patrolBoat" class="btn btn-dark" v-on:click="placing('patrolBoat')" v-show="patrolBoat">Place Ship</button>
                         <button id="partolVertical" class="btn btn-success" v-on:click="placing('partolVertical')" v-show="partolVertical">Vertical</button>
                         <button id="cancelPatrolBoat" class="btn btn-danger" v-on:click="cancelShip('patrol boat')" v-show="cancelPatrolBoat">Cancel placement</button>                        
+                        <button id="sendShipsBtn" class="btn btn-primary" v-on:click="sendShips()" v-show="sendShipsBtn"> Send Ships</button>
+                    </div>
+
+                    <div id="salvoButtons" v-if="ships.length == 5">
+                        <button v-if="salvoButtons()"  class="btn btn-primary" v-on:click="placingSalvos()">Salvos</button>
+                        <button v-else  class="btn btn-danger" v-on:click="postSalvos()">Fire</button>
                     </div>
                 <div>
                 <table id="tablePlayer">
@@ -64,7 +70,7 @@
                         </tr>
                         <tr v-for="(row, counter) in rows" class="gpRow">
                             <td class="gridBox">{{row}}</td>
-                            <td v-for="(row, index) in rows" class="gridBox" :id='getId(counter, index, "opp")'></td>
+                            <td v-for="(row, index) in rows" class="gridBox boxForSalvo" :id='getId(counter, index, "opp")'></td>
                         </tr>
                     </tbody>
                 </table>

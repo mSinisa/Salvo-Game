@@ -5,9 +5,12 @@ var app = new Vue({
     data: {
 
         gameInfo: null,
-        ships: null,
-        salvos: null,
+        ships: [],
+        salvos: [],
+        actualSalvos:[],
         hover: false,
+        salvoHover:false,
+        salvoPlaceable: false,
         shipLength: null,
         isPlaceable: false,
         placingHorizontally: true,
@@ -50,11 +53,12 @@ var app = new Vue({
         cancelBattleShip: false,
         cancelSubmarine: false,
         cancelDestroyer: false,
-        cancelPatrolBoat: false
+        cancelPatrolBoat: false,
+        sendShipsBtn: false
     },
 
     methods: {
-        getData: function () {
+        getData() {
             fetch(this.url, {
                     method: "GET"
                 })
@@ -62,7 +66,7 @@ var app = new Vue({
                     return data.json();
                 })
                 .then(function (MyData) {
-                    console.log(MyData)
+                    console.log(MyData);
                     app.gameInfo = MyData;
                     app.ships = MyData.ships;
                     app.returnNames();
@@ -72,7 +76,7 @@ var app = new Vue({
                 })
         },
 
-        getId: function (counter, index, who) {
+        getId(counter, index, who) {
             //String.fromCharCode(65) is = A... index starts at 0 and in the first place is = 1
             //then for ID we get A1 and so on
             if (who === "pl") {
@@ -85,7 +89,7 @@ var app = new Vue({
             }
         },
 
-        getGpInUrl: function () {
+        getGpInUrl() {
             //accesing Game Player ID in URL
             var url_string = window.location.href;
             var url = new URL(url_string);
@@ -93,7 +97,7 @@ var app = new Vue({
             return gp;
         },
 
-        placeShips: function () {
+        placeShips() {
             for (var i = 0; i < this.ships.length; i++) {
                 for (var j = 0; j < this.ships[i]["locations"].length; j++) {
                     var shipLocationPl = "pl" + this.ships[i]["locations"][j];
@@ -103,7 +107,7 @@ var app = new Vue({
             }
         },
 
-        placeSalvos: function () {
+        placeSalvos() {
             for (var turn in this.salvos) {
                 for (var gpId in this.salvos[turn]) {
                     //displaying array of locations for each turn
@@ -112,39 +116,46 @@ var app = new Vue({
                             //k  is showing location of each salvo for Player
                             var salvoLocationPl = "opp" + this.salvos[turn][gpId][k];
                             //make the Pl salvo location equal to the grid ID 
-                            document.getElementById(salvoLocationPl).innerHTML = "<div class='salvoHit'></div>";
+                            document.getElementById(salvoLocationPl).innerHTML = "<div class='salvoHit'>"+turn+"</div>";
                             // document.getElementById(salvoLocationPl).classList.add("salvoHit");
+                            // document.getElementById(salvoLocationPl).innerText = turn;
                         } else {
                             // k is showing location of each salvo for Opponent
                             var salvoLocationOpp = "pl" + this.salvos[turn][gpId][k];
                             if (document.getElementById(salvoLocationOpp).classList.contains("shipLocation")) {
-                                document.getElementById(salvoLocationOpp).innerHTML = "<div class='salvoHit'></div>";
+                                document.getElementById(salvoLocationOpp).innerHTML = "<div class='salvoHit'>"+turn+"</div>";
                                 // document.getElementById(salvoLocationOpp).classList.add("salvoHit");
+                                // document.getElementById(salvoLocationOpp).innerText= turn;
                             } else {
-                                document.getElementById(salvoLocationOpp).innerHTML = "<div class='salvoMiss'></div>";
+                                document.getElementById(salvoLocationOpp).innerHTML = "<div class='salvoMiss'>"+turn+"</div>";
                                 // document.getElementById(salvoLocationOpp).classList.add("salvoMiss");
+                                // document.getElementById(salvoLocationOpp).innerText = turn;
                             }
                         }
                     }
                 }
-
             }
         },
 
-        returnNames: function () {
-            var names = [];
-            for (var i = 0; i < this.gameInfo.gamePlayers.length; i++) {
-                names.push(this.gameInfo.gamePlayers[i]["player"]["username"]);
+        returnNames() {
+            for(var i=0; i<this.gameInfo["gamePlayers"].length;i++){
+                if(this.gameInfo["gamePlayers"].length == 1){
+                    document.getElementById("nameDisplayPL").innerHTML = this.gameInfo["gamePlayers"][i]["player"]["username"];
+                    document.getElementById("nameDisplayOPP").innerHTML = "Waiting for opponenet to join";
+                } else {
+                if(this.gameInfo["gamePlayers"][i]["gamePlayer_id"] == this.getGpInUrl()){
+                    document.getElementById("nameDisplayPL").innerHTML = this.gameInfo["gamePlayers"][i]["player"]["username"];
+                } else {
+                    document.getElementById("nameDisplayOPP").innerHTML = this.gameInfo["gamePlayers"][i]["player"]["username"];
+                }
             }
-            document.getElementById("nameDisplayPL").innerHTML = `${names[0]} `;
-            document.getElementById("nameDisplayOPP").innerHTML = ` ${names[1]}`;
+            }
         },
 
-        postShips: function () {
+        postShips() {
             fetch("/api/games/players/" + this.getGpInUrl() + "/ships", {
                     credentials: "include",
                     headers: {
-                        //  'Accept':'application/json',
                         'Content-type': 'application/json'
                     },
                     method: 'POST',
@@ -152,13 +163,43 @@ var app = new Vue({
                 })
                 .then(function (response) {
                     console.log(response);
+                    if(response.status == 201){
+                        window.location.reload();
+                    }
                     return response.json();
                 }).then(function (json) {
-                    console.log(json);
+                    // console.log(json);
                 })
                 .catch(function (error) {
                     console.log('Request failure: ', error);
                 })
+        },
+
+        postSalvos(){
+            fetch("/api/games/players/" + this.getGpInUrl()+ "/salvos", {
+                credentials: "include",
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    method: 'POST',
+                    body: JSON.stringify({"locations":app.actualSalvos})
+            }).then(function(response){
+                console.log(response);
+                if(response.status == 403){
+                    alert ("Not your turn yet");
+                    for(let i=0; i<app.actualSalvos.length;i++){
+                        document.getElementById("opp" + app.actualSalvos[i]).classList.remove("salvo");
+                    }
+                    app.actualSalvos = [];
+                } else if (response == 201){
+                    app.actualSalvos = [];
+                }
+                return response.json();
+            }).then(function(json) {
+                console.log(json);
+            }).catch(function(error) {
+                console.log('Request failure: ', error);
+            })
         },
 
         placing(buttonId) {
@@ -225,7 +266,6 @@ var app = new Vue({
                     var hoveredBoxIdFirstPart = hoveredBox.id.slice(0, 3);
                     var hoveredBoxIdSecondPart = Number(hoveredBox.id.slice(3));
                     var lastShipBoxNumber = hoveredBoxIdSecondPart + (this.shipLength - 1);
-
                     if (lastShipBoxNumber < 11) {
                         //if none of the ship boxes contain shipLocation class
                         var counter = 0;
@@ -442,29 +482,114 @@ var app = new Vue({
                     this.cancelPatrolBoat = false;
                     break;
             }
+        },
+
+        sendShips(){
+            this.postShips();
+            var nodes= document.getElementById("shipsToPlace").childNodes;
+            for(var i=0;i<nodes.length;i++){   
+                if(nodes[i].nodeName == "BUTTON" || nodes[i].nodeName == "H5"){
+                    nodes[i].style.display = "none";
+                }
+            }
+        },
+
+        placingSalvos(){
+            if(this.gameInfo.gamePlayers.length == 1){
+                alert ("wait for opponent to join");
+            } else {
+                this.salvoHover=true;
+            }
+            
+        },
+
+        hoveringSalvos(){
+            if(this.salvoHover){
+                var hoveredBox = event.target;
+                if(hoveredBox.classList == "salvoHit" || hoveredBox.classList == "salvoMiss"){
+                   hoveredBox.classList.add("boxShipInUse");
+                   this.salvoPlaceable = false;
+                } 
+                if(hoveredBox.childNodes.length == 0){
+                    if(hoveredBox.classList.contains("salvo")){
+                        this.salvoPlaceable = false;
+                    } else{
+                        hoveredBox.classList.add("boxForShipFree");
+                        this.salvoPlaceable = true;
+                    }
+                } else {
+                    hoveredBox.classList.add("boxShipInUse");
+                    this.salvoPlaceable = false;
+                }         
+            }
+        },
+
+        unhoveringSalvos(){
+            if(this.salvoHover){
+                var hoveredBox = event.target;
+                if(hoveredBox.classList == "salvoHit" || hoveredBox.classList == "salvoMiss"){
+                    hoveredBox.classList.remove("boxShipInUse");
+                 }
+                 if(hoveredBox.childNodes.length == 0){
+                     hoveredBox.classList.remove("boxForShipFree");
+                 } else {
+                     hoveredBox.classList.remove("boxShipInUse");
+                 } 
+            }
+        },
+        
+        clickableSalvos(){
+            if(this.salvoHover && this.salvoPlaceable){
+                var hoveredBox = event.target;
+                document.getElementById(hoveredBox.id).classList.add("salvo");
+                document.getElementById(hoveredBox.id).classList.remove("boxForShipFree");
+                this.actualSalvos.push(hoveredBox.id.slice(3));
+                for(var i=0; i<this.actualSalvos.length;i++){
+                    if(this.actualSalvos.length == 5){
+                        this.salvoPlaceable = false;
+                        this.salvoHover = false;
+                    }
+                }
+            }
+        },
+
+        salvoButtons(){
+            if(this.actualSalvos.length == 5){
+                return false;
+            } else {
+                return true;
+            }
         }
+       
     },
 
     created: function () {
         this.url = "/api/game_view/" + this.getGpInUrl();
         this.getData();
-
+              
     },
     mounted() {
         document.querySelectorAll(".boxForShip").forEach(box => {
-            box.addEventListener('mouseover', this.hoveringShips);
+            box.addEventListener("mouseover", this.hoveringShips);
             box.addEventListener("mouseout", this.unhoveringShips);
             box.addEventListener("click", this.clickableShips);
         });
 
+        document.querySelectorAll(".boxForSalvo").forEach(square =>{
+            square.addEventListener("mouseover",this.hoveringSalvos);
+            square.addEventListener("mouseout",this.unhoveringSalvos);
+            square.addEventListener("click",this.clickableSalvos);
+        });
     },
 
     computed: {
-
+        
     },
 
     updated() {
-
+        if(this.cancelCarrier && this.cancelBattleShip && this.cancelDestroyer && this.cancelSubmarine && this.cancelPatrolBoat){
+            this.sendShipsBtn = true;
+        }
     }
 
 });
