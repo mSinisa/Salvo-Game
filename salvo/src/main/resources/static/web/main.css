@@ -9,7 +9,7 @@ html, body{
     margin:auto;
 }
 
-.container{
+body{
     font-family: 'Play', sans-serif;
     background-image: url("images/warship.jpg");
     height: 100vh;

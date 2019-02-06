@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <div id="app" class="container">
+    <div id="app" class="container-fluid">
         <div class="headlineAndTableContainer">
         <h1 class="headline">Game View</h1>
         <!-- <h2>{{gameInfo.gamePlayers[0].player.username}} vs {{gameInfo.gamePlayers[1].player.username}}</h2> -->
@@ -43,8 +43,8 @@
                     </div>
 
                     <div id="salvoButtons" v-if="ships.length == 5">
-                        <button v-if="salvoButtons()"  class="btn btn-primary" v-on:click="placingSalvos()">Salvos</button>
-                        <button v-else  class="btn btn-danger" v-on:click="postSalvos()">Fire</button>
+                        <button id="salvosBtn"  class="btn btn-primary" v-on:click="placingSalvos()" v-show="salvosBtn">Salvos</button>
+                        <button id="fireSalvosBtn"  class="btn btn-danger" v-on:click="postSalvos()" v-show="fireSalvosBtn">Fire</button>
                     </div>
                 <div>
                 <table id="tablePlayer">

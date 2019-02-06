@@ -7,6 +7,7 @@ var app = new Vue({
         gameInfo: null,
         ships: [],
         salvos: [],
+        hits:[],
         actualSalvos:[],
         hover: false,
         salvoHover:false,
@@ -54,13 +55,22 @@ var app = new Vue({
         cancelSubmarine: false,
         cancelDestroyer: false,
         cancelPatrolBoat: false,
-        sendShipsBtn: false
+        sendShipsBtn: false,
+        salvosBtn:true,
+        fireSalvosBtn:false,
+        playerSalvos:[]
     },
 
     methods: {
         getData() {
             fetch(this.url, {
                     method: "GET"
+                })
+                .then(function(res){
+                    if(!res.ok){
+                        throw Error(res.status);
+                    }
+                    return res;
                 })
                 .then(function (data) {
                     return data.json();
@@ -71,8 +81,13 @@ var app = new Vue({
                     app.ships = MyData.ships;
                     app.returnNames();
                     app.salvos = MyData.salvos;
+                    app.hits = MyData.hits;
                     app.placeShips();
-                    app.placeSalvos();
+                    app.plSalvosToArrShowOppSalvos();
+                    app.showPlayerSalvos();
+                })
+                .catch(function(err){
+                    console.log(err);
                 })
         },
 
@@ -107,34 +122,52 @@ var app = new Vue({
             }
         },
 
-        placeSalvos() {
+        plSalvosToArrShowOppSalvos() {
             for (var turn in this.salvos) {
                 for (var gpId in this.salvos[turn]) {
                     //displaying array of locations for each turn
                     for (var k = 0; k < this.salvos[turn][gpId].length; k++) {
                         if (gpId == this.getGpInUrl()) {
                             //k  is showing location of each salvo for Player
+                            var salvoLoc = this.salvos[turn][gpId][k];
+                            this.playerSalvos.push(salvoLoc);
+                            var plARR =[];
+                            
+                           
+                            for(var j=0; j<this.hits.length;j++){
+                                if(salvoLoc == this.hits[j]){    
+                                    document.getElementById("opp" + salvoLoc).innerHTML = "<div class='salvoHit'>"+turn+"</div>";                               
+                                } else {                              
+                                    document.getElementById("opp" + salvoLoc).innerHTML = "<div class='salvoMiss'>"+turn+"</div>";                                   
+                                }
+                            }
                             var salvoLocationPl = "opp" + this.salvos[turn][gpId][k];
-                            //make the Pl salvo location equal to the grid ID 
-                            document.getElementById(salvoLocationPl).innerHTML = "<div class='salvoHit'>"+turn+"</div>";
+                            // make the Pl salvo location equal to the grid ID 
+                            document.getElementById(salvoLocationPl).innerHTML = "<div class='salvoMiss'>"+turn+"</div>";
                             // document.getElementById(salvoLocationPl).classList.add("salvoHit");
                             // document.getElementById(salvoLocationPl).innerText = turn;
                         } else {
                             // k is showing location of each salvo for Opponent
-                            var salvoLocationOpp = "pl" + this.salvos[turn][gpId][k];
+                            var salvoLocOpp = this.salvos[turn][gpId][k];
+                            var salvoLocationOpp = "pl" + salvoLocOpp;
                             if (document.getElementById(salvoLocationOpp).classList.contains("shipLocation")) {
                                 document.getElementById(salvoLocationOpp).innerHTML = "<div class='salvoHit'>"+turn+"</div>";
-                                // document.getElementById(salvoLocationOpp).classList.add("salvoHit");
-                                // document.getElementById(salvoLocationOpp).innerText= turn;
                             } else {
                                 document.getElementById(salvoLocationOpp).innerHTML = "<div class='salvoMiss'>"+turn+"</div>";
-                                // document.getElementById(salvoLocationOpp).classList.add("salvoMiss");
-                                // document.getElementById(salvoLocationOpp).innerText = turn;
                             }
                         }
                     }
                 }
             }
+        },
+
+        showPlayerSalvos(){
+            // let salvosMissPl = this.playerSalvos.filter(salvo => this.hits.indexOf(salvo) === -1);
+            // salvosMissPl.forEach(location => document.getElementById(`opp${location}`).innerHTML ="<div class='salvoMiss'></div>");
+            this.hits.forEach(hit => {
+                var turn = document.getElementById(`opp${hit}`).children[0].innerText;
+                document.getElementById(`opp${hit}`).innerHTML ="<div class='salvoHit'>" + turn + "</div>"
+            });
         },
 
         returnNames() {
@@ -168,7 +201,7 @@ var app = new Vue({
                     }
                     return response.json();
                 }).then(function (json) {
-                    // console.log(json);
+                    console.log(json);
                 })
                 .catch(function (error) {
                     console.log('Request failure: ', error);
@@ -182,7 +215,7 @@ var app = new Vue({
                         'Content-type': 'application/json'
                     },
                     method: 'POST',
-                    body: JSON.stringify({"locations":app.actualSalvos})
+                    body: JSON.stringify({"salvoLocations":app.actualSalvos})
             }).then(function(response){
                 console.log(response);
                 if(response.status == 403){
@@ -190,10 +223,16 @@ var app = new Vue({
                     for(let i=0; i<app.actualSalvos.length;i++){
                         document.getElementById("opp" + app.actualSalvos[i]).classList.remove("salvo");
                     }
-                    app.actualSalvos = [];
-                } else if (response == 201){
-                    app.actualSalvos = [];
+                    app.salvosBtn = true;
+                    app.fireSalvosBtn = false;
+                    // app.actualSalvos = [];
+                } else if (response.status == 201){
+                    // app.actualSalvos = [];
+                    this.salvosBtn = true;
+                    this.fireSalvosBtn = false;
+                    window.location.reload();
                 }
+                app.actualSalvos = [];
                 return response.json();
             }).then(function(json) {
                 console.log(json);
@@ -531,9 +570,10 @@ var app = new Vue({
                     hoveredBox.classList.remove("boxShipInUse");
                  }
                  if(hoveredBox.childNodes.length == 0){
-                     hoveredBox.classList.remove("boxForShipFree");
+                     hoveredBox.classList.remove("boxForShipFree");                 
+                     hoveredBox.classList.remove("boxShipInUse");                 
                  } else {
-                     hoveredBox.classList.remove("boxShipInUse");
+                     hoveredBox.classList.remove("boxShipInUse");                    
                  } 
             }
         },
@@ -544,22 +584,14 @@ var app = new Vue({
                 document.getElementById(hoveredBox.id).classList.add("salvo");
                 document.getElementById(hoveredBox.id).classList.remove("boxForShipFree");
                 this.actualSalvos.push(hoveredBox.id.slice(3));
-                for(var i=0; i<this.actualSalvos.length;i++){
                     if(this.actualSalvos.length == 5){
                         this.salvoPlaceable = false;
                         this.salvoHover = false;
-                    }
-                }
+                        this.salvosBtn = false;
+                        this.fireSalvosBtn = true;
+                    }           
             }
         },
-
-        salvoButtons(){
-            if(this.actualSalvos.length == 5){
-                return false;
-            } else {
-                return true;
-            }
-        }
        
     },
 

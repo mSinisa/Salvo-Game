@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
@@ -119,7 +120,7 @@ public class SalvoController {
         if(!isGuest(authentication)) {
             Player player = playerRepository.findByUserName(authentication.getName());
             GamePlayer currentGamePlayer = gamePlayerRepository.getOne(gameID);
-            System.out.println(currentGamePlayer);
+
 
             if(player.getId() == currentGamePlayer.getPlayer().getId()){
                 System.out.println("they are equal");
@@ -136,6 +137,12 @@ public class SalvoController {
                         .map(gamePlayer -> gamePlayer.getSalvos()).flatMap(salvoSet -> salvoSet.stream())
                         .collect(Collectors.toSet()))
                 );
+                gameViewInfo.put("hits", getHits(currentGamePlayer));
+                //get hits
+                //get the enemy
+                //if u have the enemy or not
+                //get the salvo locations && enemy ship locations
+                //filter and collect salvo lucations contain ship location
                 return new ResponseEntity<>(gameViewInfo, HttpStatus.CREATED);
             }else{
                 System.out.println("different");
@@ -144,6 +151,26 @@ public class SalvoController {
         } else {
             return new ResponseEntity<>(makeMap("error", "You are not logged in"), HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    public List<String> getHits(GamePlayer gamePlayer){
+    GamePlayer opponent = getOpponent(gamePlayer);
+    if(opponent != null){
+         List<String> salvoLocations = gamePlayer.getSalvos().stream()
+                .map(salvo -> salvo.getSalvoLocations())
+                .flatMap(s -> s.stream()).collect(Collectors.toList());
+
+        List<String> opponentShipLocations = opponent.getShips().stream()
+                .map(sh -> sh.getShipLocations())
+                .flatMap(loc -> loc.stream())
+                .collect(Collectors.toList());
+
+        return  salvoLocations.stream()
+                .filter(location -> opponentShipLocations.contains(location))
+                .collect(Collectors.toList());
+    }else{
+        return null;
+    }
     }
 
     public Map<String, Object> getShipInfo(Ship ship){
@@ -224,7 +251,7 @@ public class SalvoController {
 
     @RequestMapping(path ="/games/players/{gamePlayerId}/salvos", method = RequestMethod.POST)
     public ResponseEntity<Map<String,Object>> placeSalvoes (@PathVariable long gamePlayerId, @RequestBody Salvo salvo, Authentication authentication){
-        Player player = playerRepository.findByUserName(authentication.getName());
+            Player player = playerRepository.findByUserName(authentication.getName());
         GamePlayer currentGamePlayer= gamePlayerRepository.getOne(gamePlayerId);
         //there is no current user logged in, or there is no game player with the given ID, or
         // the current user is not the game player the ID references
@@ -239,4 +266,10 @@ public class SalvoController {
                 return new ResponseEntity<>(makeMap("success", "added salvo"), HttpStatus.CREATED);
         }
     }
+
+    public GamePlayer getOpponent(GamePlayer gamePlayer){
+      return  gamePlayer.getGame().getGamePlayers().stream()
+                .filter(gamePlayer1 -> gamePlayer1.getId() != gamePlayer.getId()).findAny().orElse(null);
+    }
+
 }
