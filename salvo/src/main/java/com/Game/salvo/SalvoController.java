@@ -123,7 +123,6 @@ public class SalvoController {
 
 
             if(player.getId() == currentGamePlayer.getPlayer().getId()){
-                System.out.println("they are equal");
                 gameViewInfo.put("created", currentGamePlayer.getGame().getDate());
                 gameViewInfo.put("id", currentGamePlayer.getGame().getId());
                 gameViewInfo.put("gamePlayers", currentGamePlayer.getGame().getGamePlayers().stream()
@@ -145,7 +144,6 @@ public class SalvoController {
                 //filter and collect salvo lucations contain ship location
                 return new ResponseEntity<>(gameViewInfo, HttpStatus.CREATED);
             }else{
-                System.out.println("different");
                 return new ResponseEntity<>(makeMap("error", "Not allowed to view opponents game"), HttpStatus.FORBIDDEN);
             }
         } else {
@@ -257,8 +255,9 @@ public class SalvoController {
         // the current user is not the game player the ID references
         if(isGuest(authentication) || currentGamePlayer == null || !currentGamePlayer.getPlayer().equals(player)){
             return new ResponseEntity<>(makeMap("error", "action not allowed"), HttpStatus.UNAUTHORIZED);
-        } else if(gamePlayerRepository.getOne(gamePlayerId).getSalvos().size() != 0){
-            return new ResponseEntity<>(makeMap("error", "you have placed salvos for this turn"), HttpStatus.FORBIDDEN);
+        }// else if(gamePlayerRepository.getOne(gamePlayerId).getSalvos().size() != 5)
+        else if(salvo.getSalvoLocations().size() != 5) {
+            return new ResponseEntity<>(makeMap("error", "you need 5 salvo locations"), HttpStatus.FORBIDDEN);
         } else {
                 salvo.setTurn(currentGamePlayer.getLastTurn()+1);
                 currentGamePlayer.addSalvo(salvo);
