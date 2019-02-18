@@ -14,28 +14,76 @@ margin: 0;
     background-position: top;
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
-    align-items: center;
+}
+
+.backgroundColor{
+    width: 100%;
+    background-color: rgba(221, 233, 235, 0.74);
+}
+
+.mainHeadline{
+    text-align: center;
+    font-weight: 800;
+    font-size: 6rem;
+    margin: 2vh;
 }
 
 .headline{
-    text-align: center;
-    margin: 5vh;
+    font-weight: 700;
 }
 
-.headlineAndTableContainer{
-    width: 70%;
-    /* height: 100vh; */
-    background-color: rgba(221, 233, 235, 0.74);
-  
+form input{
+    background-color: rgba(61, 61, 66, 0.178) !important;
 }
+
+.table{
+    margin-bottom: 0;
+}
+
 
 .tableContainer{
     width:80%;
-    /* height: 100vh; */
-  margin: auto;
+    margin: auto;
 }
 
 .tableHead{
-    background-color:  rgba(188, 210, 214, 0.61);
+    background-color: rgba(61, 61, 66, 0.178) !important;
 }
+
+.tbodyHeight{
+    max-height: 400px;
+    overflow:auto;
+}
+
+.cellWidthSm{
+    width: 16%;
+}
+
+.cellWidthMd{
+    width: 18%;
+}
+
+.cellWidth{
+    width: 28%;
+}
+
+th{
+    font-size: larger;
+}
+
+td{
+    font-weight: 600;
+}
+
+a{
+    color: #7e5e09;
+}
+
+@media (max-width: 991.98px) {
+    .mainHeadline{
+        text-align: center;
+        font-weight: 800;
+        font-size: 4rem;
+        margin: 2vh;
+    }
+ }

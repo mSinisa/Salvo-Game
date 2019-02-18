@@ -1,4 +1,4 @@
-var app = new Vue({
+let app = new Vue({
 
             el: "#app",
 
@@ -24,10 +24,10 @@ var app = new Vue({
                     fetch(this.url, {
                             method: "GET"
                         })
-                        .then(function (data) {
+                        .then(data => {
                             return data.json();
                         })
-                        .then(function (MyData) {
+                        .then(MyData => {
                             if(MyData.player.username){
                                 app.usernameDisplay = true;
                             }
@@ -50,7 +50,7 @@ var app = new Vue({
                             method: 'POST',
                             body: 'username=' + this.username + '&password=' + this.password,
                         })
-                        .then(function (data) {
+                        .then(data => {
                             console.log('Request success: ', data);
                             if(data.status === 200){
                             alert("Welcome " + app.username);
@@ -62,7 +62,7 @@ var app = new Vue({
                                 alert("Wrong username or password, try again");                              
                             }
                         })
-                        .catch(function (error) {
+                        .catch(error => {
                             console.log('Request failure: ', error);
                             alert("Wrong user name or password");
                         })
@@ -76,7 +76,7 @@ var app = new Vue({
                             },
                             method: 'POST',
                         })
-                        .then(function (data) {
+                        .then(data => {
                             console.log('Request success: ', data);
                             alert("Bye");
                             app.logoutForm = false;
@@ -85,7 +85,7 @@ var app = new Vue({
                             app.usernameDisplay = false;
                             window.location.reload();
                         })
-                        .catch(function (error) {
+                        .catch(error => {
                             console.log('Request failure: ', error);
                         });
                 },
@@ -174,8 +174,6 @@ var app = new Vue({
                           });
                 },
 
-                
-
                 joinGame(game){
                     var gameID= game["game_id"];                    
                     fetch("/api/game/"+ gameID + "/players", {
@@ -186,14 +184,14 @@ var app = new Vue({
                         },
                         method: 'POST'
                     })
-                    .then(function (response) {
+                    .then(response => {
                         return response.json();
                     })
-                    .then(function (json) {
+                    .then(json => {
                         app.gpId=json.gpID;
                         window.location = "http://localhost:8080/web/game.html?gp=" + app.gpId;
                     })
-                    .catch(function (error) {  
+                    .catch(error => {  
                         console.log("Error: " + error);
                           });
 

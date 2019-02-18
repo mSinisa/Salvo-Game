@@ -5,12 +5,13 @@ let app = new Vue({
     data: {
 
         gameInfo: null,
+        gameStatus:"placing ships",
         ships: [],
         salvos: [],
-        hits:[],
-        actualSalvos:[],
+        hits: [],
+        actualSalvos: [],
         hover: false,
-        salvoHover:false,
+        salvoHover: false,
         salvoPlaceable: false,
         shipLength: null,
         isPlaceable: false,
@@ -45,9 +46,9 @@ let app = new Vue({
         battleShip: true,
         battleVertical: true,
         submarine: true,
-        submarineVertical:true,
+        submarineVertical: true,
         destroyer: true,
-        destroyerVertical:true,
+        destroyerVertical: true,
         patrolBoat: true,
         partolVertical: true,
         cancelCarrier: false,
@@ -56,9 +57,9 @@ let app = new Vue({
         cancelDestroyer: false,
         cancelPatrolBoat: false,
         sendShipsBtn: false,
-        salvosBtn:true,
-        fireSalvosBtn:false,
-        playerSalvos:[]
+        salvosBtn: false,
+        fireSalvosBtn: false,
+        playerSalvos: []
     },
 
     methods: {
@@ -66,8 +67,8 @@ let app = new Vue({
             fetch(this.url, {
                     method: "GET"
                 })
-                .then(res =>{
-                    if(!res.ok){
+                .then(res => {
+                    if (!res.ok) {
                         throw Error(res.status);
                     }
                     return res;
@@ -79,12 +80,13 @@ let app = new Vue({
                     console.log(MyData);
                     app.gameInfo = MyData;
                     app.ships = MyData.ships;
-                    app.returnNames();
+                    // app.returnNames();
                     app.salvos = MyData.salvos;
                     app.hits = MyData.hits;
                     app.placeShips();
                     app.plSalvosToArrShowOppSalvos();
                     app.showPlayerSalvos();
+                    // app.gameStatus = MyData.gameStatus;
                 })
                 .catch(err => {
                     console.log(err);
@@ -112,14 +114,35 @@ let app = new Vue({
             return gp;
         },
 
-        placeShips() {
-            for (let i = 0; i < this.ships.length; i++) {
-                for (let j = 0; j < this.ships[i]["locations"].length; j++) {
-                    let shipLocationPl = "pl" + this.ships[i]["locations"][j];
-                    let locationInGridPL = document.getElementById(shipLocationPl);
-                    locationInGridPL.classList.add("shipLocation");
+        getOppGpId() {
+            for (let i = 0; i < this.gameInfo.gamePlayers.length; i++) {
+                if (!this.gameInfo.gamePlayers[i].gamePlayer_id == getGpInUrl()) {
+                    return this.gameInfo.gamePlayers[i].gamePlayer_id;
                 }
             }
+        },
+
+        placeShips() {
+            
+            for (let i = 0; i < this.ships.length; i++) {
+                if(this.ships[i]["locations"][0].slice(1) == this.ships[i]["locations"][1].slice(1)){
+                    for (let j = 0; j < this.ships[i]["locations"].length; j++) {
+                        let shipLocationPl = "pl" + this.ships[i]["locations"][j];
+                        let locationInGridPL = document.getElementById(shipLocationPl);
+                        locationInGridPL.classList.add("shipVertical");
+                        console.log("hor");
+                    }
+                } else{
+                    for (let j = 0; j < this.ships[i]["locations"].length; j++) {
+                        let shipLocationPl = "pl" + this.ships[i]["locations"][j];
+                        let locationInGridPL = document.getElementById(shipLocationPl);
+                        locationInGridPL.classList.add("shipHorizontal");
+                        
+                    }
+                }
+                
+            }
+
         },
 
         plSalvosToArrShowOppSalvos() {
@@ -131,25 +154,26 @@ let app = new Vue({
                             //k  is showing location of each salvo for Player
                             let salvoLoc = this.salvos[turn][gpId][k];
                             this.playerSalvos.push(salvoLoc);
-                            let plARR =[];
-                            for(let j=0; j<this.hits.length;j++){
-                                if(salvoLoc == this.hits[j]){    
-                                    document.getElementById("opp" + salvoLoc).innerHTML = "<div class='salvoHit'>"+turn+"</div>";                               
-                                } else {                              
-                                    document.getElementById("opp" + salvoLoc).innerHTML = "<div class='salvoMiss'>"+turn+"</div>";                                   
+                            let plARR = [];
+                            for (let j = 0; j < this.hits.length; j++) {
+                                if (salvoLoc == this.hits[j]) {
+                                    document.getElementById("opp" + salvoLoc).innerHTML = "<div class='salvoHit'>" + turn + "</div>";
+                                } else {
+                                    document.getElementById("opp" + salvoLoc).innerHTML = "<div class='salvoMiss'>" + turn + "</div>";
                                 }
                             }
                             let salvoLocationPl = "opp" + this.salvos[turn][gpId][k];
                             // make the Pl salvo location equal to the grid ID 
-                            document.getElementById(salvoLocationPl).innerHTML = "<div class='salvoMiss'>"+turn+"</div>";
+                            document.getElementById(salvoLocationPl).innerHTML = "<div class='salvoMiss'>" + turn + "</div>";
                         } else {
                             // k is showing location of each salvo for Opponent
                             let salvoLocOpp = this.salvos[turn][gpId][k];
                             let salvoLocationOpp = "pl" + salvoLocOpp;
-                            if (document.getElementById(salvoLocationOpp).classList.contains("shipLocation")) {
-                                document.getElementById(salvoLocationOpp).innerHTML = "<div class='salvoHit'>"+turn+"</div>";
+                            if (document.getElementById(salvoLocationOpp).classList.contains("shipHorizontal") ||
+                            document.getElementById(salvoLocationOpp).classList.contains("shipVertical")) {
+                                document.getElementById(salvoLocationOpp).innerHTML = "<div class='salvoHit'>" + turn + "</div>";
                             } else {
-                                document.getElementById(salvoLocationOpp).innerHTML = "<div class='salvoMiss'>"+turn+"</div>";
+                                document.getElementById(salvoLocationOpp).innerHTML = "<div class='salvoMiss'>" + turn + "</div>";
                             }
                         }
                     }
@@ -157,30 +181,45 @@ let app = new Vue({
             }
         },
 
-        showPlayerSalvos(){
+        showPlayerSalvos() {
             this.hits.forEach(hit => {
                 let turn = document.getElementById(`opp${hit}`).children[0].innerText;
-                document.getElementById(`opp${hit}`).innerHTML ="<div class='salvoHit'>" + turn + "</div>"
+                document.getElementById(`opp${hit}`).innerHTML = "<div class='salvoHit'>" + turn + "</div>"
             });
         },
 
-        returnNames() {
-            for(let i=0; i<this.gameInfo["gamePlayers"].length;i++){
-                if(this.gameInfo["gamePlayers"].length == 1){
-                    document.getElementById("nameDisplayPL").innerHTML = this.gameInfo["gamePlayers"][i]["player"]["username"];
-                    document.getElementById("nameDisplayOPP").innerHTML = "Waiting for opponenet to join";
-                } else {
-                if(this.gameInfo["gamePlayers"][i]["gamePlayer_id"] == this.getGpInUrl()){
-                    document.getElementById("nameDisplayPL").innerHTML = this.gameInfo["gamePlayers"][i]["player"]["username"];
-                } else {
-                    document.getElementById("nameDisplayOPP").innerHTML = this.gameInfo["gamePlayers"][i]["player"]["username"];
-                }
-            }
-            }
+        showPlayersNames(){
+            document.getElementById("nameDisplayPL").innerText = this.gameInfo.playerName;
+            document.getElementById("nameDisplayOPP").innerText = this.gameInfo.opponentName;
         },
 
+        // returnNames() {
+        //     for (let i = 0; i < this.gameInfo["gamePlayers"].length; i++) {
+        //         if (this.gameInfo["gamePlayers"].length == 1) {
+        //             document.getElementById("nameDisplayPL").innerHTML = this.gameInfo["gamePlayers"][i]["player"]["username"];
+        //             document.getElementById("nameDisplayOPP").innerHTML = "Opponenet";
+        //         } else {
+        //             if (this.gameInfo["gamePlayers"][i]["gamePlayer_id"] == this.getGpInUrl()) {
+        //                 document.getElementById("nameDisplayPL").innerHTML = this.gameInfo["gamePlayers"][i]["player"]["username"];
+        //             } else {
+        //                 document.getElementById("nameDisplayOPP").innerHTML = this.gameInfo["gamePlayers"][i]["player"]["username"];
+        //             }
+        //         }
+        //     }
+        // },
+
         postShips() {
-            fetch("/api/games/players/" + this.getGpInUrl() + "/ships", {
+            let counter = 0;
+            let shipsPlaced = true;
+            for(let i=0; i<this.actualShips.length;i++){
+                if(this.actualShips[i].shipLocations.length !== 0){
+                    counter++;
+                } else {
+                    shipsPlaced = false;
+                }
+            }
+            if(counter == 5 && shipsPlaced){
+                fetch("/api/games/players/" + this.getGpInUrl() + "/ships", {
                     credentials: "include",
                     headers: {
                         'Content-type': 'application/json'
@@ -190,7 +229,7 @@ let app = new Vue({
                 })
                 .then(response => {
                     console.log(response);
-                    if(response.status == 201){
+                    if (response.status == 201) {
                         window.location.reload();
                     }
                     return response.json();
@@ -200,27 +239,34 @@ let app = new Vue({
                 .catch(error => {
                     console.log('Request failure: ', error);
                 })
+            } else {
+                alert("place all ships");
+            }
+            
+            
         },
 
-        postSalvos(){
-            fetch("/api/games/players/" + this.getGpInUrl()+ "/salvos", {
+        postSalvos() {
+            fetch("/api/games/players/" + this.getGpInUrl() + "/salvos", {
                 credentials: "include",
-                    headers: {
-                        'Content-type': 'application/json'
-                    },
-                    method: 'POST',
-                    body: JSON.stringify({"salvoLocations":app.actualSalvos})
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    "salvoLocations": app.actualSalvos
+                })
             }).then(response => {
                 console.log(response);
-                if(response.status == 403){
-                    alert ("Not your turn yet");
-                    for(let i=0; i<app.actualSalvos.length;i++){
+                if (response.status == 403) {
+                    alert("Not your turn yet");
+                    for (let i = 0; i < app.actualSalvos.length; i++) {
                         document.getElementById("opp" + app.actualSalvos[i]).classList.remove("salvo");
                     }
-                    app.salvosBtn = true;
+                    // app.salvosBtn = true;
                     app.fireSalvosBtn = false;
-                } else if (response.status == 201){
-                    this.salvosBtn = true;
+                } else if (response.status == 201) {
+                    // this.salvosBtn = true;
                     this.fireSalvosBtn = false;
                     window.location.reload();
                 }
@@ -301,7 +347,8 @@ let app = new Vue({
                         //if none of the ship boxes contain shipLocation class
                         let counter = 0;
                         for (let i = 0; i < this.shipLength; i++) {
-                            if (!document.getElementById(hoveredBoxIdFirstPart + (hoveredBoxIdSecondPart + i)).classList.contains("shipLocation")) {
+                            if (!document.getElementById(hoveredBoxIdFirstPart + (hoveredBoxIdSecondPart + i)).classList.contains("shipHorizontal") &&
+                            !document.getElementById(hoveredBoxIdFirstPart + (hoveredBoxIdSecondPart + i)).classList.contains("shipVertical")) {
                                 counter++;
                                 if (counter == this.shipLength) {
                                     for (let j = 0; j < this.shipLength; j++) {
@@ -334,7 +381,8 @@ let app = new Vue({
                         //if none of the ship boxes contain shipLocation class
                         let counter = 0;
                         for (let i = 0; i < this.shipLength; i++) {
-                            if (!document.getElementById("pl" + (this.rows[hoveredBoxIndexInRows + i]) + hoveredBoxIdNumber).classList.contains("shipLocation")) {
+                            if (!document.getElementById("pl" + (this.rows[hoveredBoxIndexInRows + i]) + hoveredBoxIdNumber).classList.contains("shipHorizontal") &&
+                            !document.getElementById("pl" + (this.rows[hoveredBoxIndexInRows + i]) + hoveredBoxIdNumber).classList.contains("shipVertical")) {
                                 counter++;
                                 if (counter == this.shipLength) {
                                     for (let j = 0; j < this.shipLength; j++) {
@@ -410,7 +458,7 @@ let app = new Vue({
                     //IF SHIP INSIDE GRID              
                     for (let j = 0; j < this.shipLength; j++) {
                         document.getElementById(hoveredBoxIdFirstPart + (hoveredBoxIdSecondPart + j)).classList.remove("boxForShipFree");
-                        document.getElementById(hoveredBoxIdFirstPart + (hoveredBoxIdSecondPart + j)).classList.add("shipLocation");
+                        document.getElementById(hoveredBoxIdFirstPart + (hoveredBoxIdSecondPart + j)).classList.add("shipHorizontal");
                         placedShips.push(hoveredBoxIdFirstPart.slice(2) + (hoveredBoxIdSecondPart + j));
                         //ADDING SHIP LOCATIONS TO AN ARRAY
                     }
@@ -427,9 +475,9 @@ let app = new Vue({
                     let hoveredBoxIndexInRows = this.rows.indexOf(hoveredBoxIdLetter);
                     //IF SHIP INSIDE GRID
                     for (let j = 0; j < this.shipLength; j++) {
-                        document.getElementById("pl" + (this.rows[hoveredBoxIndexInRows+j] + hoveredBoxIdNumber)).classList.remove("boxForShipFree");
-                        document.getElementById("pl" + (this.rows[hoveredBoxIndexInRows+j] + hoveredBoxIdNumber)).classList.add("shipLocation");
-                        placedShips.push(this.rows[hoveredBoxIndexInRows+j] + hoveredBoxIdNumber);
+                        document.getElementById("pl" + (this.rows[hoveredBoxIndexInRows + j] + hoveredBoxIdNumber)).classList.remove("boxForShipFree");
+                        document.getElementById("pl" + (this.rows[hoveredBoxIndexInRows + j] + hoveredBoxIdNumber)).classList.add("shipVertical");
+                        placedShips.push(this.rows[hoveredBoxIndexInRows + j] + hoveredBoxIdNumber);
                         //ADDING SHIP LOCATIONS TO AN ARRAY
                     }
                     //ADD SHIPS TO THE ACTUAL SHIPS OBJECT
@@ -437,7 +485,7 @@ let app = new Vue({
                         if (app.actualShips[j]["shipType"].slice(0, 6).indexOf(this.shipName.slice(0, 6)) !== -1) {
                             app.actualShips[j]["shipLocations"] = placedShips;
                         }
-                    }    
+                    }
                 }
 
                 placedShips = [];
@@ -474,11 +522,17 @@ let app = new Vue({
         },
 
         cancelShip(nameOfShip) {
+            this.sendShipsBtn = false;
             for (let i = 0; i < this.actualShips.length; i++) {
                 if (this.actualShips[i]["shipType"] == nameOfShip) {
                     let locations = app.actualShips[i]["shipLocations"];
                     locations.forEach(location => {
-                        document.getElementById("pl" + location).classList.remove("shipLocation");
+                        if(document.getElementById("pl" + location).classList.contains("shipHorizontal")){
+                            document.getElementById("pl" + location).classList.remove("shipHorizontal");
+                        } else if(document.getElementById("pl" + location).classList.contains("shipVertical")){
+                            document.getElementById("pl" + location).classList.remove("shipVertical");
+                        }
+                        
                     })
                     app.actualShips[i]["shipLocations"] = [];
                 }
@@ -513,105 +567,180 @@ let app = new Vue({
             }
         },
 
-        sendShips(){
-            this.postShips();
-            let nodes= document.getElementById("shipsToPlace").childNodes;
-            for(let i=0;i<nodes.length;i++){   
-                if(nodes[i].nodeName == "BUTTON" || nodes[i].nodeName == "H5"){
-                    nodes[i].style.display = "none";
-                }
-            }
-        },
+        // sendShips() {
+            // this.postShips();
+            // let nodes = document.getElementById("shipsToPlace").childNodes;
+            // for (let i = 0; i < nodes.length; i++) {
+            //     if (nodes[i].nodeName == "BUTTON" || nodes[i].nodeName == "H5") {
+            //         nodes[i].style.display = "none";
+            //     }
+            // }
+        // },
 
-        placingSalvos(){
-            if(this.gameInfo.gamePlayers.length == 1){
-                alert ("wait for opponent to join");
+        placingSalvos() {
+            if (this.gameInfo.gamePlayers.length == 1) {
+                alert("wait for opponent to join");
+            } else if (this.gameInfo.opponentHasShips == false) {
+                alert("waiting for opponent to place ships");
             } else {
-                this.salvoHover=true;
+                this.salvoHover = true;
             }
-            
         },
 
-        hoveringSalvos(){
-            if(this.salvoHover){
-                let hoveredBox = event.target;
-                if(hoveredBox.classList == "salvoHit" || hoveredBox.classList == "salvoMiss"){
-                   hoveredBox.classList.add("boxShipInUse");
-                   this.salvoPlaceable = false;
-                } 
-                if(hoveredBox.childNodes.length == 0){
-                    if(hoveredBox.classList.contains("salvo")){
-                        this.salvoPlaceable = false;
-                    } else{
-                        hoveredBox.classList.add("boxForShipFree");
-                        this.salvoPlaceable = true;
-                    }
-                } else {
-                    hoveredBox.classList.add("boxShipInUse");
+        hoveringSalvos() {
+        if (this.salvoHover) {
+            let hoveredBox = event.target;
+            if (hoveredBox.classList.contains("salvoHit") || hoveredBox.classList.contains("salvoMiss") ) {
+                hoveredBox.classList.add("boxShipInUse");
+                this.salvoPlaceable = false;
+            }
+            if (hoveredBox.childNodes.length == 0) {
+                if (hoveredBox.classList.contains("salvo")) {
                     this.salvoPlaceable = false;
-                }         
+                } else {
+                    hoveredBox.classList.add("boxForShipFree");
+                    this.salvoPlaceable = true;
+                }
+            } else {
+                hoveredBox.classList.add("boxShipInUse");
+                this.salvoPlaceable = false;
             }
-        },
+        }
+    },
 
-        unhoveringSalvos(){
-            if(this.salvoHover){
-                let hoveredBox = event.target;
-                if(hoveredBox.classList == "salvoHit" || hoveredBox.classList == "salvoMiss"){
-                    hoveredBox.classList.remove("boxShipInUse");
-                 }
-                 if(hoveredBox.childNodes.length == 0){
-                     hoveredBox.classList.remove("boxForShipFree");                 
-                     hoveredBox.classList.remove("boxShipInUse");                 
-                 } else {
-                     hoveredBox.classList.remove("boxShipInUse");                    
-                 } 
+    unhoveringSalvos() {
+        if (this.salvoHover) {
+            let hoveredBox = event.target;
+            if (hoveredBox.classList == "salvoHit" || hoveredBox.classList == "salvoMiss") {
+                hoveredBox.classList.remove("boxShipInUse");
             }
-        },
-        
-        clickableSalvos(){
-            if(this.salvoHover && this.salvoPlaceable){
-                let hoveredBox = event.target;
-                document.getElementById(hoveredBox.id).classList.add("salvo");
-                document.getElementById(hoveredBox.id).classList.remove("boxForShipFree");
+            if (hoveredBox.childNodes.length == 0) {
+                hoveredBox.classList.remove("boxForShipFree");
+                hoveredBox.classList.remove("boxShipInUse");
+            } else {
+                hoveredBox.classList.remove("boxShipInUse");
+            }
+        }
+    },
+
+    clickableSalvos() {
+        if (this.salvoHover && this.salvoPlaceable) {
+            let hoveredBox = event.target;
+            document.getElementById(hoveredBox.id).classList.add("salvo");
+            document.getElementById(hoveredBox.id).classList.remove("boxForShipFree");
+            if(this.actualSalvos.indexOf(hoveredBox.id.slice(3)) == -1){
                 this.actualSalvos.push(hoveredBox.id.slice(3));
-                    if(this.actualSalvos.length == 5){
-                        this.salvoPlaceable = false;
-                        this.salvoHover = false;
-                        this.salvosBtn = false;
-                        this.fireSalvosBtn = true;
-                    }           
             }
-        },
-       
+            if (this.actualSalvos.filter((item, pos) => this.actualSalvos.indexOf(item) === pos).length == 5) {
+                this.salvoPlaceable = false;
+                this.salvoHover = false;
+                this.salvosBtn = false;
+                this.fireSalvosBtn = true;
+            }
+        }
     },
 
-    created() {
-        this.url = "/api/game_view/" + this.getGpInUrl();
-        this.getData();
-              
-    },
-    mounted() {
-        document.querySelectorAll(".boxForShip").forEach(box => {
-            box.addEventListener("mouseover", this.hoveringShips);
-            box.addEventListener("mouseout", this.unhoveringShips);
-            box.addEventListener("click", this.clickableShips);
-        });
+    hideAndShowOppTableAfterPlacingShips(){
+        if(!this.gameInfo.playerHasShips){
+            document.getElementById("tableOpponent").style.display ="none";
+            document.getElementById("middleSection").style.display ="none";
+            document.getElementById("gameStatus").classList.remove("mt-2");
+            document.getElementById("gameStatus").style.display="none";
 
-        document.querySelectorAll(".boxForSalvo").forEach(square =>{
-            square.addEventListener("mouseover",this.hoveringSalvos);
-            square.addEventListener("mouseout",this.unhoveringSalvos);
-            square.addEventListener("click",this.clickableSalvos);
-        });
+        } else {
+            document.getElementById("marginTopChanging").classList.replace("mt-2", "mt-4");
+        }
     },
 
-    computed: {
-        
-    },
-
-    updated() {
-        if(this.cancelCarrier && this.cancelBattleShip && this.cancelDestroyer && this.cancelSubmarine && this.cancelPatrolBoat){
+    showSendShipsBtn(){
+        if (this.cancelCarrier && this.cancelBattleShip && this.cancelDestroyer && this.cancelSubmarine && this.cancelPatrolBoat) {
             this.sendShipsBtn = true;
         }
+    },
+
+    checkIfStatusChanged(){
+        console.log("in changing");
+            fetch(this.url, {
+                method:"GET"
+            }).then(res =>{
+                if(!res.ok){
+                    throw Error(res.status);
+                }
+                return res;
+            }).then(data => {
+                return data.json();
+            }).then(myData => {
+                console.log(myData);
+                if(myData.gameStatus == "shooting" || myData.gameStatus == "player wins" || myData.gameStatus == "opponent wins" 
+                ){
+                    console.log("something");
+                    location.reload();
+                }
+            }).catch(err => {
+                console.log(err);
+            })
+        
+    },
+
+    updateGameStatus(){
+        if(!this.gameInfo.playerHasShips){
+            document.getElementById('gameStatusText').innerText = "Status: placing ships";
+        } else if(this.gameStatus == "player wins"){
+            document.getElementById('gameStatusText').innerText =`Status: ${this.gameInfo.playerName} wins!`;
+        } else if(this.gameStatus == "opponent wins"){
+            document.getElementById('gameStatusText').innerText = `Status: ${this.gameInfo.opponentName} wins!`;
+        } else if(this.gameStatus == "game over"){
+            document.getElementById('gameStatusText').innerText = "Status: Game over. It's a tie!";
+        } else if(this.gameStatus == 'waiting' || this.gameStatus == 'waiting for opponent'){
+            setInterval(this.checkIfStatusChanged, 3000);
+        } else {
+            this.gameStatus = this.gameInfo.gameStatus;
+        }
+    },
+
+    salvoButtonDisplay(){
+        if(this.gameStatus == "shooting" && !this.fireSalvosBtn){
+            this.salvosBtn = true;
+        }
     }
+
+    // showSalvoHitsInMiddleSection(){
+    //     for(ship in this.actualShips){
+            
+    //     }
+    // }
+
+},
+
+created() {
+    this.url = "/api/game_view/" + this.getGpInUrl();
+    this.getData();
+
+},
+mounted() {
+    document.querySelectorAll('[data-field=boxForShip]').forEach(box => {
+        box.addEventListener("mouseover", this.hoveringShips);
+        box.addEventListener("mouseout", this.unhoveringShips);
+        box.addEventListener("click", this.clickableShips);
+    });
+
+    document.querySelectorAll('[data-field=boxForSalvo]').forEach(square => {
+        square.addEventListener("mouseover", this.hoveringSalvos);
+        square.addEventListener("mouseout", this.unhoveringSalvos);
+        square.addEventListener("click", this.clickableSalvos);
+    });
+},
+
+computed: {
+ 
+},
+
+updated() {
+    this.showSendShipsBtn();
+    this.hideAndShowOppTableAfterPlacingShips();
+    this.updateGameStatus();
+    this.salvoButtonDisplay();
+    this.showPlayersNames();
+}
 
 });

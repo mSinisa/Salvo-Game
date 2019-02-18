@@ -10,80 +10,130 @@
 </head>
 
 <body>
-    <div id="app" class="container-fluid">
-        <div class="headlineAndTableContainer">
-        <h1 class="headline">Game View</h1>
-        <!-- <h2>{{gameInfo.gamePlayers[0].player.username}} vs {{gameInfo.gamePlayers[1].player.username}}</h2> -->
-        
-        <div class="tablesContainer">
-            <div class="individualTable">
-                    <h2 id="nameDisplayPL"></h2>
-                    <div class="shipsToPlace" id="shipsToPlace" v-if="ships.length == 0">
-                        <h5>Carrier</h5>
-                        <button id="carrier" class="btn btn-dark" v-on:click="placing('carrier')" v-show="carrier">Place Ship</button>
-                        <button id="carrierVertical" class="btn btn-success" v-on:click="placing('carrierVertical')" v-show="carrierVertical">Vertical</button>
-                        <button id="cancelCarrier" class="btn btn-danger" v-on:click="cancelShip('carrier')" v-show="cancelCarrier">Cancel placement</button>
-                        <h5>Battle Ship</h5>
-                        <button id="battleShip" class="btn btn-dark" v-on:click="placing('battleShip')" v-show="battleShip">Place Ship</button>
-                        <button id="battleVertical" class="btn btn-success" v-on:click="placing('battleVertical')" v-show="battleVertical">Vertical</button>
-                        <button id="cancelBattleShip" class="btn btn-danger" v-on:click="cancelShip('battle ship')" v-show="cancelBattleShip">Cancel placement</button>                        
-                        <h5>Submarine</h5>
-                        <button id="submarine" class="btn btn-dark" v-on:click="placing('submarine')" v-show="submarine">Place Ship</button>
-                        <button id="submarineVertical" class="btn btn-success" v-on:click="placing('submarineVertical')" v-show="submarineVertical">Vertical</button>
-                        <button id="cancelSubmarine" class="btn btn-danger" v-on:click="cancelShip('submarine')" v-show="cancelSubmarine">Cancel placement</button>                        
-                        <h5>Destroyer</h5>
-                        <button id="destroyer" class="btn btn-dark" v-on:click="placing('destroyer')" v-show="destroyer">Place Ship</button>
-                        <button id="destroyerVertical" class="btn btn-success" v-on:click="placing('destroyerVertical')" v-show="destroyerVertical">Vertical</button>
-                        <button id="cancelDestroyer" class="btn btn-danger" v-on:click="cancelShip('destroyer')" v-show="cancelDestroyer">Cancel placement</button>                        
-                        <h5>Patrol Boat</h5>
-                        <button id="patrolBoat" class="btn btn-dark" v-on:click="placing('patrolBoat')" v-show="patrolBoat">Place Ship</button>
-                        <button id="partolVertical" class="btn btn-success" v-on:click="placing('partolVertical')" v-show="partolVertical">Vertical</button>
-                        <button id="cancelPatrolBoat" class="btn btn-danger" v-on:click="cancelShip('patrol boat')" v-show="cancelPatrolBoat">Cancel placement</button>                        
-                        <button id="sendShipsBtn" class="btn btn-primary" v-on:click="sendShips()" v-show="sendShipsBtn"> Send Ships</button>
-                    </div>
+    <div id="app" class="backgroundColor">
+        <header class="container-fluid">
+            <div class="row pt-2">
+                <span class="headline display-4 col-5" id="nameDisplayPL"></span><span class="headline display-4 col-2">VS</span><span
+                    class="headline display-4 col-5" id="nameDisplayOPP"></span>
+            </div>
+        </header>
 
-                    <div id="salvoButtons" v-if="ships.length == 5">
-                        <button id="salvosBtn"  class="btn btn-primary" v-on:click="placingSalvos()" v-show="salvosBtn">Salvos</button>
-                        <button id="fireSalvosBtn"  class="btn btn-danger" v-on:click="postSalvos()" v-show="fireSalvosBtn">Fire</button>
+        <div id="gameStatus" class="gameStatus pb-1 pt-1 mt-2">
+            <h4 class="m-0 statusText" id="gameStatusText"> Status: {{gameStatus}}</h4>
+        </div>
+
+        <div class="container-fluid mb-2">
+            <div class="row text-center" id="shipsToPlace" v-if="ships.length == 0">
+                <div class="placeShipWrapper">
+                    <h5 class="shipName">Carrier</h5>
+                    <div>
+                        <button id="carrier" class="btn btnColor btn-sm" v-on:click="placing('carrier')" v-show="carrier">Horizontal</button>
+                        <button id="carrierVertical" class="btn btnColor btn-sm" v-on:click="placing('carrierVertical')"
+                            v-show="carrierVertical">Vertical</button>
+                        <button id="cancelCarrier" class="btn cancelBtnColor btn-sm" v-on:click="cancelShip('carrier')"
+                            v-show="cancelCarrier">Cancel placement</button>
                     </div>
-                <div>
-                <table id="tablePlayer">
-                    <tbody>
-                        <tr class="gpRow">
-                            <td v-for="column in columns" class="gridBox">{{column}}</td>
-                        </tr>
-                        <tr v-for="(row, counter) in rows" class="gpRow">
-                            <td class="gridBox">{{row}}</td>
-                            <td v-for="(row, index) in rows" class="gridBox boxForShip" :id='getId(counter, index, "pl")'></td>
-                        </tr>
-                    </tbody>
-                </table>
+                </div>
+                <div class="placeShipWrapper">
+                    <h5 class="shipName">Battle Ship</h5>
+                    <div>
+                        <button id="battleShip" class="btn btnColor btn-sm" v-on:click="placing('battleShip')" v-show="battleShip">Horizontal</button>
+                        <button id="battleVertical" class="btn btnColor btn-sm" v-on:click="placing('battleVertical')"
+                            v-show="battleVertical">Vertical</button>
+                        <button id="cancelBattleShip" class="btn cancelBtnColor btn-sm" v-on:click="cancelShip('battle ship')"
+                            v-show="cancelBattleShip">Cancel placement</button>
+                    </div>
+                </div>
+                <div class="placeShipWrapper">
+                    <h5 class="shipName">Submarine</h5>
+                    <div>
+                        <button id="submarine" class="btn btnColor btn-sm" v-on:click="placing('submarine')" v-show="submarine">Horizontal</button>
+                        <button id="submarineVertical" class="btn btnColor btn-sm" v-on:click="placing('submarineVertical')"
+                            v-show="submarineVertical">Vertical</button>
+                        <button id="cancelSubmarine" class="btn cancelBtnColor btn-sm" v-on:click="cancelShip('submarine')"
+                            v-show="cancelSubmarine">Cancel placement</button>
+                    </div>
+                </div>
+                <div class="placeShipWrapper">
+                    <h5 class="shipName">Destroyer</h5>
+                    <div>
+                        <button id="destroyer" class="btn btnColor btn-sm" v-on:click="placing('destroyer')" v-show="destroyer">Horizontal</button>
+                        <button id="destroyerVertical" class="btn btnColor btn-sm" v-on:click="placing('destroyerVertical')"
+                            v-show="destroyerVertical">Vertical</button>
+                        <button id="cancelDestroyer" class="btn cancelBtnColor btn-sm" v-on:click="cancelShip('destroyer')"
+                            v-show="cancelDestroyer">Cancel placement</button>
+                    </div>
+                </div>
+                <div class="placeShipWrapper">
+                    <h5 class="shipName">Patrol Boat</h5>
+                    <div>
+                        <button id="patrolBoat" class="btn btnColor btn-sm" v-on:click="placing('patrolBoat')" v-show="patrolBoat">Horizontal</button>
+                        <button id="partolVertical" class="btn btnColor btn-sm" v-on:click="placing('partolVertical')"
+                            v-show="partolVertical">Vertical</button>
+                        <button id="cancelPatrolBoat" class="btn cancelBtnColor btn-sm" v-on:click="cancelShip('patrol boat')"
+                            v-show="cancelPatrolBoat">Cancel placement</button>
+                    </div>
+                </div>
             </div>
-            </div>
-            <div class="individualTable">
-                    <h2 id="nameDisplayOPP"></h2>
-                <div>
-                <table id="tableOpponent">
-                    <tbody>
-                        <tr class="gpRow">
-                            <td v-for="column in columns" class="gridBox">{{column}}</td>
-                        </tr>
-                        <tr v-for="(row, counter) in rows" class="gpRow">
-                            <td class="gridBox">{{row}}</td>
-                            <td v-for="(row, index) in rows" class="gridBox boxForSalvo" :id='getId(counter, index, "opp")'></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row mt-2" id="marginTopChanging">
+                <div class="col-5 m-auto p-0" id="tablePlayer">
+                    <div id="sendShipsBtn" class="text-center sendBtnWrapper" v-show="sendShipsBtn">
+                        <button class="btn sendShipsBtn btn-sm" v-on:click="postShips()">
+                            Send Ships</button>
+                    </div>
+                    <table class="m-auto">
+                        <tbody>
+                            <tr>
+                                <td v-for="column in columns" class="gridBox">{{column}}</td>
+                            </tr>
+                            <tr v-for="(row, counter) in rows">
+                                <td class="gridBox">{{row}}</td>
+                                <td v-for="(row, index) in rows" class="gridBox" data-field="boxForShip" :id='getId(counter, index, "pl")'></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-2 p-0" id="middleSection">
+                    <div class="text-center" id="salvoButtons" v-if="ships.length === 5">
+                        <button id="salvosBtn" class="btn btnColor" v-on:click="placingSalvos()" v-show="salvosBtn">Salvos</button>
+                        <button id="fireSalvosBtn" class="btn cancelBtnColor" v-on:click="postSalvos()" v-show="fireSalvosBtn">Fire</button>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <div class="d-flex flex-column justify-content-center" v-for="(ship, index) in ships">
+                            <p class="m-0">{{ship.type}}</p>
+                            <div v-bind:class="'shipBox'+index">
+                                <span v-for="box in ship.locations">a</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-5 p-0" id="tableOpponent">
+                    <table class="m-auto">
+                        <tbody>
+                            <tr>
+                                <td v-for="column in columns" class="gridBox">{{column}}</td>
+                            </tr>
+                            <tr v-for="(row, counter) in rows">
+                                <td class="gridBox">{{row}}</td>
+                                <td v-for="(row, index) in rows" class="gridBox" data-field="boxForSalvo" :id='getId(counter, index, "opp")'></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
     </div>
-    </div>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
     <script src="game.js"></script>
 </body>
 
