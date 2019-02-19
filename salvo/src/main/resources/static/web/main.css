@@ -248,3 +248,29 @@ border: 2px solid rgb(206, 206, 209);
     rgba(105, 105, 105, 0.61),rgba(26, 28, 29, 0.596) );
     box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.753);
 }
+
+.shipBox0 div{
+    width: 20%;
+    height: 100%;
+}
+
+.shipBox1 div{
+    width: 25%;
+    height: 100%;
+}
+
+.shipBox2 div, .shipBox3 div{
+    width: 33.3%;
+    height: 100%;
+}
+
+.shipBox4 div{
+    width:50%;
+    height:100%;
+}
+
+.shipBoxColor{
+    background-image: linear-gradient(rgba(223, 115, 88, 0.712),rgba(214, 152, 123, 0.712),rgba(214, 108, 90, 0.712),rgba(221, 155, 125, 0.712),rgba(224, 162, 134, 0.712),
+    rgba(240, 189, 166, 0.712),rgba(221, 143, 107, 0.712) );
+    /* background-image:radial-gradient(rgba(163, 27, 61, 0.911), rgba(218, 205, 208, 0.918), rgba(197, 56, 92, 0.904),rgba(71, 5, 21, 0.89) ) ; */
+}

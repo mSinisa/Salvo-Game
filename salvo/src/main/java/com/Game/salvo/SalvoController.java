@@ -148,6 +148,7 @@ public class SalvoController {
                 gameViewInfo.put("playerHasShips", playerHasShips(currentGamePlayer));
                 gameViewInfo.put("playerName", currentGamePlayer.getPlayer().getUserName());
                 gameViewInfo.put("opponentName", getOpponentsName(currentGamePlayer));
+                gameViewInfo.put("hitsWithShipName", getHitsWithShipName( getHits(currentGamePlayer), currentGamePlayer));
 
                 return new ResponseEntity<>(gameViewInfo, HttpStatus.CREATED);
             } else {
@@ -156,6 +157,24 @@ public class SalvoController {
         } else {
             return new ResponseEntity<>(makeMap("error", "You are not logged in"), HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    public Map<String, Object> getHitsWithShipName(List<String> hits, GamePlayer gamePlayer){
+        Map<String,Object> hitAndName = new HashMap<>();
+        GamePlayer opponent = getOpponent(gamePlayer);
+        if (opponent != null) {
+        if(hits.size()!=0) {
+
+                for (Ship ship : opponent.getShips()) {
+                    for (String hit : hits) {
+                        if (ship.getShipLocations().contains(hit)) {
+                            hitAndName.put(hit, ship.getShipType());
+                        }
+                    }
+                }
+            }
+        }
+        return hitAndName;
     }
 
     public String getOpponentsName(GamePlayer gamePlayer){

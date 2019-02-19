@@ -140,9 +140,7 @@ let app = new Vue({
                         
                     }
                 }
-                
             }
-
         },
 
         plSalvosToArrShowOppSalvos() {
@@ -192,21 +190,6 @@ let app = new Vue({
             document.getElementById("nameDisplayPL").innerText = this.gameInfo.playerName;
             document.getElementById("nameDisplayOPP").innerText = this.gameInfo.opponentName;
         },
-
-        // returnNames() {
-        //     for (let i = 0; i < this.gameInfo["gamePlayers"].length; i++) {
-        //         if (this.gameInfo["gamePlayers"].length == 1) {
-        //             document.getElementById("nameDisplayPL").innerHTML = this.gameInfo["gamePlayers"][i]["player"]["username"];
-        //             document.getElementById("nameDisplayOPP").innerHTML = "Opponenet";
-        //         } else {
-        //             if (this.gameInfo["gamePlayers"][i]["gamePlayer_id"] == this.getGpInUrl()) {
-        //                 document.getElementById("nameDisplayPL").innerHTML = this.gameInfo["gamePlayers"][i]["player"]["username"];
-        //             } else {
-        //                 document.getElementById("nameDisplayOPP").innerHTML = this.gameInfo["gamePlayers"][i]["player"]["username"];
-        //             }
-        //         }
-        //     }
-        // },
 
         postShips() {
             let counter = 0;
@@ -567,17 +550,7 @@ let app = new Vue({
             }
         },
 
-        // sendShips() {
-            // this.postShips();
-            // let nodes = document.getElementById("shipsToPlace").childNodes;
-            // for (let i = 0; i < nodes.length; i++) {
-            //     if (nodes[i].nodeName == "BUTTON" || nodes[i].nodeName == "H5") {
-            //         nodes[i].style.display = "none";
-            //     }
-            // }
-        // },
-
-        placingSalvos() {
+    placingSalvos() {
             if (this.gameInfo.gamePlayers.length == 1) {
                 alert("wait for opponent to join");
             } else if (this.gameInfo.opponentHasShips == false) {
@@ -585,9 +558,9 @@ let app = new Vue({
             } else {
                 this.salvoHover = true;
             }
-        },
+    },
 
-        hoveringSalvos() {
+    hoveringSalvos() {
         if (this.salvoHover) {
             let hoveredBox = event.target;
             if (hoveredBox.classList.contains("salvoHit") || hoveredBox.classList.contains("salvoMiss") ) {
@@ -659,7 +632,6 @@ let app = new Vue({
     },
 
     checkIfStatusChanged(){
-        console.log("in changing");
             fetch(this.url, {
                 method:"GET"
             }).then(res =>{
@@ -671,10 +643,9 @@ let app = new Vue({
                 return data.json();
             }).then(myData => {
                 console.log(myData);
-                if(myData.gameStatus == "shooting" || myData.gameStatus == "player wins" || myData.gameStatus == "opponent wins" 
+                if(myData.gameStatus == "shooting" || myData.gameStatus == "player wins" || myData.gameStatus == "opponent wins" || myData.gameStatus == "game over"
                 ){
-                    console.log("something");
-                    location.reload();
+                location.reload();
                 }
             }).catch(err => {
                 console.log(err);
@@ -702,13 +673,51 @@ let app = new Vue({
         if(this.gameStatus == "shooting" && !this.fireSalvosBtn){
             this.salvosBtn = true;
         }
-    }
+    },
 
-    // showSalvoHitsInMiddleSection(){
-    //     for(ship in this.actualShips){
-            
-    //     }
-    // }
+    giveNamesToDisplayShips(){
+        for(let i=0; i<this.ships.length; i++){
+            if(this.ships[i].type == 'carrier'){
+                document.getElementById('shipName0').innerText = "Carrier";
+            } else if(this.ships[i].type == 'battle ship'){
+                document.getElementById('shipName1').innerText = "Battle Ship";
+            } else if(this.ships[i].type == 'submarine'){
+                document.getElementById('shipName2').innerText = "Submarine";
+            } else if(this.ships[i].type == 'destroyer'){
+                document.getElementById('shipName3').innerText = "Destroyer";
+            } else {
+                document.getElementById('shipName4').innerText = "Patrol Boat";
+            }
+        }
+    },
+
+    paintDivsInDisplayShips(){
+        for(hit in this.gameInfo.hitsWithShipName){
+            if(this.gameInfo.hitsWithShipName[hit] == 'carrier'){
+                let div= document.createElement("div");
+                div.classList.add("shipBoxColor");
+                document.getElementById('shipBox0').appendChild(div);
+            } else if(this.gameInfo.hitsWithShipName[hit] == 'battle ship'){
+                let div= document.createElement("div");
+                div.classList.add("shipBoxColor");
+                document.getElementById('shipBox1').appendChild(div);
+            } else if(this.gameInfo.hitsWithShipName[hit] == 'submarine'){
+                let div= document.createElement("div");
+                div.classList.add("shipBoxColor");
+                document.getElementById('shipBox2').appendChild(div);
+            } else if(this.gameInfo.hitsWithShipName[hit] == 'destroyer'){
+                let div= document.createElement("div");
+                div.classList.add("shipBoxColor");
+                document.getElementById('shipBox3').appendChild(div);
+            } else {
+                let div= document.createElement("div");
+                div.classList.add("shipBoxColor");
+                document.getElementById('shipBox4').appendChild(div);
+            }
+        }
+        //no repetition after updates
+        this.gameInfo.hitsWithShipName = {};
+    }
 
 },
 
@@ -729,6 +738,10 @@ mounted() {
         square.addEventListener("mouseout", this.unhoveringSalvos);
         square.addEventListener("click", this.clickableSalvos);
     });
+
+
+
+
 },
 
 computed: {
@@ -741,6 +754,8 @@ updated() {
     this.updateGameStatus();
     this.salvoButtonDisplay();
     this.showPlayersNames();
+    this.giveNamesToDisplayShips();
+    this.paintDivsInDisplayShips();
 }
 
 });
