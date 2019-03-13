@@ -78,8 +78,8 @@
         </div>
 
         <div class="container-fluid">
-            <div class="row mt-2" id="marginTopChanging">
-                <div class="col-5 m-auto p-0" id="tablePlayer">
+            <div class="row mt-2 d-flex flex-sm-column flex-md-row" id="marginTopChanging">
+                <div class="col-sm-10 col-md-5 m-auto p-0" id="tablePlayer">
                     <div id="sendShipsBtn" class="text-center sendBtnWrapper" v-show="sendShipsBtn">
                         <button class="btn sendShipsBtn btn-sm" v-on:click="postShips()">
                             Send Ships</button>
@@ -96,21 +96,21 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="col-2 p-0" id="middleSection">
+                <div class="col-xs-6 col-md-2 p-0 middleSection" id="middleSection" >
                     <div class="text-center" id="salvoButtons" v-show="ships.length === 5">
                         <button id="salvosBtn" class="btn btnColor" v-on:click="placingSalvos()" v-show="salvosBtn">Salvos</button>
-                        <button id="fireSalvosBtn" class="btn cancelBtnColor" v-on:click="postSalvos()" v-show="fireSalvosBtn">Fire</button>
+                        <button id="fireSalvosBtn" class="btn cancelBtnColor px-4" v-on:click="postSalvos()" v-show="fireSalvosBtn">Fire</button>
                     </div>
                     <div class="d-flex flex-column" id="displayShipsWrapper">
                         <div class="d-flex flex-column" v-for="(ship, index) in ships">
-                            <p class="m-0" v-bind:id="'shipName'+index"></p>
+                            <p class="m-0 font-weight-bold" v-bind:id="'shipName'+index"></p>
                             <div v-bind:class="'shipBox'+index" class="d-flex flex-row" v-bind:id="'shipBox'+index">
                                 
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-5 p-0" id="tableOpponent">
+                <div class="col-sm-10 col-md-5 p-0" id="tableOpponent">
                     <table class="m-auto">
                         <tbody>
                             <tr>

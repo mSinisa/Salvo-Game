@@ -1,7 +1,5 @@
 package com.Game.salvo;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -77,6 +75,10 @@ public class Player {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public Score getScore(Game game){
+        return scores.stream().filter( score -> score.getGame().equals(game)).findFirst().orElse(null);
     }
 
     @Override

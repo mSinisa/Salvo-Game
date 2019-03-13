@@ -8,7 +8,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.FetchType;
 import java.util.HashSet;
 import java.util.Set;
-import javax.validation.constraints.Email;
 import java.util.Date;
 
 @Entity

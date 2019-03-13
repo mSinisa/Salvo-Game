@@ -1,276 +1,284 @@
-
-body{
+body {
     font-family: 'Play', sans-serif;
     background-image: url("images/warship.jpg");
+    background-repeat: no-repeat;
     height: 100vh;
     background-size: cover;
-    background-position: 10% 10%;
+    background-attachment: fixed;
     overflow-y: scroll;
     margin: 0;
+    background-color: rgba(221, 233, 235, 0.39);
 }
 
-.backgroundColor{
+.backgroundColor {
     background-color: rgba(221, 233, 235, 0.39);
     height: 100vh;
+    background-attachment: fixed;
 }
 
-.headline{
+.headline {
     text-align: center;
     padding: 1vh 0;
-    margin:0;
-    text-shadow:  0px 1px 0px #888, 0px 2px 0px #777, 0px 3px 0px #666, 0px 4px 0px #555,
-     0px 6px 0px #444;
+    margin: 0;
+    text-shadow: 0px 1px 0px #888, 0px 2px 0px #777, 0px 3px 0px #666, 0px 4px 0px #555,
+        0px 6px 0px #444;
 }
 
-.headline:hover{
-    text-shadow:  1px 1px 0px rgb(141, 138, 138);
-    transition:0.3s;
+.headline:hover {
+    text-shadow: 1px 1px 0px rgb(141, 138, 138);
+    transition: 0.3s;
 }
 
-.gameStatus{
-    /* border: 2px solid rgb(206, 206, 209); */
+.gameStatus {
     width: 70%;
-    /* border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    border-bottom-left-radius: 20px; */
-    margin:auto;
+    margin: auto;
     text-align: center;
-    /* background-image: linear-gradient(rgba(129, 179, 218, 0.712),rgba(217, 221, 224, 0.712), rgba(196, 213, 226, 0.712),rgba(129, 179, 218, 0.712),rgba(154, 192, 221, 0.712),
-    rgba(161, 194, 219, 0.712),rgba(129, 179, 218, 0.712) );
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.644); */
-    /* text-shadow: 2px 2px 3px rgba(255,255,255,0.5); */
-    /* text-shadow:  1px 1px 2px rgba(136, 189, 219, 0.63), 2px 2px 2px #777, 3px 3px 0px rgb(106, 157, 187), 4px 4px 4px #555; */
-    text-shadow:  0px 1px 0px #888, 0px 2px 0px #777, 0px 3px 0px #666;
+    text-shadow: 0px 1px 0px #888, 0px 2px 0px #777, 0px 3px 0px #666;
 }
 
-.gameStatus:hover{
-    text-shadow:  1px 1px 0px rgb(141, 138, 138);
-    transition:0.3s;
+.gameStatus:hover {
+    text-shadow: 1px 1px 0px rgb(141, 138, 138);
+    transition: 0.3s;
 }
 
-.statusText{
+.statusText {
     font-size: 45px;
 }
 
-.placeShipWrapper{
-    width:18%;
+.placeShipWrapper {
+    width: 18%;
     display: flex;
     flex-direction: column;
-    margin: 1vh auto; 
+    margin: 1vh auto;
     border: 2px solid rgb(206, 206, 209);
     padding-bottom: 8px;
     box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.644);
     transition: 0.6s;
 }
 
-.placeShipWrapper:hover{
+.placeShipWrapper:hover {
     box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.74);
 }
 
-.shipName{
-font-weight: 600;
-transition: 0.8s;
+.shipName {
+    font-weight: 600;
+    transition: 0.8s;
 }
 
-.btnColor{
-   background-image: linear-gradient(rgba(129, 179, 218, 0.712),rgba(217, 221, 224, 0.712), rgba(196, 213, 226, 0.712),rgba(129, 179, 218, 0.712),rgba(154, 192, 221, 0.712),
-    rgba(161, 194, 219, 0.712),rgba(129, 179, 218, 0.712) );
+.btnColor {
+    background-image: linear-gradient(rgba(129, 179, 218, 0.712), rgba(217, 221, 224, 0.712), rgba(196, 213, 226, 0.712), rgba(129, 179, 218, 0.712), rgba(154, 192, 221, 0.712),
+        rgba(161, 194, 219, 0.712), rgba(129, 179, 218, 0.712));
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.644);
 }
 
-.btnColor:hover{
+.btnColor:hover {
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.808);
-    transition:0.2s;
+    transition: 0.2s;
 }
 
-.btnColor:focus{
+.btnColor:focus {
     font-weight: 600;
     outline: none !important;
 }
 
-.cancelBtnColor{
-    background-image: linear-gradient(rgba(223, 115, 88, 0.712),rgba(214, 152, 123, 0.712),rgba(214, 108, 90, 0.712),rgba(221, 155, 125, 0.712),rgba(224, 162, 134, 0.712),
-    rgba(240, 189, 166, 0.712),rgba(221, 143, 107, 0.712) );
+.cancelBtnColor {
+    background-image: linear-gradient(rgba(223, 115, 88, 0.712), rgba(214, 152, 123, 0.712), rgba(214, 108, 90, 0.712), rgba(221, 155, 125, 0.712), rgba(224, 162, 134, 0.712),
+        rgba(240, 189, 166, 0.712), rgba(221, 143, 107, 0.712));
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.644);
 }
 
-.cancelBtnColor:hover{
+.cancelBtnColor:hover {
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.808);
-    transition:0.2s;
+    transition: 0.2s;
 }
 
-.cancelBtnColor:focus{
+.cancelBtnColor:focus {
     font-weight: 600;
     outline: none !important;
 }
 
-.sendBtnWrapper{
+.sendBtnWrapper {
     position: absolute;
     top: 10%;
     left: 42%;
-    background-image: linear-gradient(rgba(223, 115, 88, 0.712),rgba(214, 152, 123, 0.712),rgba(214, 108, 90, 0.712),rgba(221, 155, 125, 0.712),rgba(224, 162, 134, 0.712),
-    rgba(240, 189, 166, 0.712),rgba(221, 143, 107, 0.712) );
+    background-image: linear-gradient(rgba(223, 115, 88, 0.712), rgba(214, 152, 123, 0.712), rgba(214, 108, 90, 0.712), rgba(221, 155, 125, 0.712), rgba(224, 162, 134, 0.712),
+        rgba(240, 189, 166, 0.712), rgba(221, 143, 107, 0.712));
     border: 2px solid rgb(206, 206, 209);
     box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.753);
     padding: 15px;
 }
 
-.sendBtnWrapper:hover{
+.sendBtnWrapper:hover {
     box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.753);
-    transition:0.2s;
+    transition: 0.2s;
 }
 
-.sendShipsBtn{
-    background-image: linear-gradient(rgba(129, 179, 218, 0.712),rgba(217, 221, 224, 0.712), rgba(196, 213, 226, 0.712),rgba(129, 179, 218, 0.712),rgba(154, 192, 221, 0.712),
-    rgba(161, 194, 219, 0.712),rgba(129, 179, 218, 0.712) ); 
+.sendShipsBtn {
+    background-image: linear-gradient(rgba(129, 179, 218, 0.712), rgba(217, 221, 224, 0.712), rgba(196, 213, 226, 0.712), rgba(129, 179, 218, 0.712), rgba(154, 192, 221, 0.712),
+        rgba(161, 194, 219, 0.712), rgba(129, 179, 218, 0.712));
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.644);
 }
 
-.sendShipsBtn:hover{
+.sendShipsBtn:hover {
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.753);
-    transition:0.2s;
+    transition: 0.2s;
     font-weight: 600;
 }
 
-table{
+table {
     border-spacing: 0;
-    background-image: linear-gradient(rgba(129, 179, 218, 0.712),rgba(217, 221, 224, 0.712), rgba(196, 213, 226, 0.712),rgba(129, 179, 218, 0.712),rgba(154, 192, 221, 0.712),
-    rgba(161, 194, 219, 0.712),rgba(129, 179, 218, 0.712) );
+    background-image: linear-gradient(rgba(129, 179, 218, 0.712), rgba(217, 221, 224, 0.712), rgba(196, 213, 226, 0.712), rgba(129, 179, 218, 0.712), rgba(154, 192, 221, 0.712),
+        rgba(161, 194, 219, 0.712), rgba(129, 179, 218, 0.712));
     border: 2px solid rgb(206, 206, 209);
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.644);
     transition: 0.6s;
 }
 
-table:hover{
+table:hover {
     box-shadow: 0 14px 26px 0 rgba(0, 0, 0, 0.884);
-    background-image: linear-gradient(rgba(129, 179, 218, 0.795),rgba(179, 204, 223, 0.808), rgba(196, 213, 226, 0.808),rgba(129, 179, 218, 0.836),rgba(154, 192, 221, 0.822),
-    rgba(161, 194, 219, 0.808),rgba(129, 179, 218, 0.829) );
+    background-image: linear-gradient(rgba(129, 179, 218, 0.795), rgba(179, 204, 223, 0.808), rgba(196, 213, 226, 0.808), rgba(129, 179, 218, 0.836), rgba(154, 192, 221, 0.822),
+        rgba(161, 194, 219, 0.808), rgba(129, 179, 218, 0.829));
     border: 2px solid rgb(107, 107, 107);
 
 }
 
-.gridBox{
-height: 33px;
-width: 33px;
-background-color: rgba(217, 221, 224, 0.137);
-/* border:2px solid red; */
-text-align: center;
-margin: 0;
-border: 2px solid rgb(206, 206, 209);
+.gridBox {
+    height: 33px;
+    width: 33px;
+    background-color: rgba(217, 221, 224, 0.137);
+    /* border:2px solid red; */
+    text-align: center;
+    margin: 0;
+    border: 2px solid rgb(206, 206, 209);
 }
 
-.shipLocation{
+.shipLocation {
     background-color: rgba(48, 41, 54, 0.959);
 }
 
-.shipHorizontal{
-    background-image: linear-gradient(rgba(17, 22, 26, 0.795),rgba(75, 76, 77, 0.808), rgba(108, 116, 121, 0.808),rgba(63, 64, 65, 0.836),rgba(154, 192, 221, 0.822),
-    rgba(105, 105, 105, 0.808),rgba(26, 28, 29, 0.829) );
+.shipHorizontal {
+    background-image: linear-gradient(rgba(17, 22, 26, 0.795), rgba(75, 76, 77, 0.808), rgba(108, 116, 121, 0.808), rgba(63, 64, 65, 0.836), rgba(154, 192, 221, 0.822),
+        rgba(105, 105, 105, 0.808), rgba(26, 28, 29, 0.829));
     box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.753);
 }
 
-.shipVertical{
-    background-image: linear-gradient(to right,rgba(17, 22, 26, 0.795),rgba(75, 76, 77, 0.808), rgba(108, 116, 121, 0.808),rgba(63, 64, 65, 0.836),rgba(154, 192, 221, 0.822),
-    rgba(105, 105, 105, 0.808),rgba(26, 28, 29, 0.829) );
+.shipVertical {
+    background-image: linear-gradient(to right, rgba(17, 22, 26, 0.795), rgba(75, 76, 77, 0.808), rgba(108, 116, 121, 0.808), rgba(63, 64, 65, 0.836), rgba(154, 192, 221, 0.822),
+        rgba(105, 105, 105, 0.808), rgba(26, 28, 29, 0.829));
     box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.753);
 }
 
-.shipHorizontal:hover, .shipVertical:hover{
+.shipHorizontal:hover,
+.shipVertical:hover {
     box-shadow: 0 2px 0px 0 rgba(0, 0, 0, 0.603);
 }
 
-.salvo{
+.salvo {
     background: rgba(0, 0, 0, 0.863);
 }
 
-.salvoHit{
+.salvoHit {
     width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  border:1px solid gray;
-  text-align: center;
-  background-image:radial-gradient(rgba(163, 27, 61, 0.911), rgba(218, 205, 208, 0.918), rgba(197, 56, 92, 0.904),rgba(71, 5, 21, 0.89) ) ;
-  margin: auto;
-  font-weight:600;
-  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.753);
-} 
+    height: 25px;
+    border-radius: 50%;
+    border: 1px solid gray;
+    text-align: center;
+    background-image: radial-gradient(rgba(163, 27, 61, 0.911), rgba(218, 205, 208, 0.918), rgba(197, 56, 92, 0.904), rgba(71, 5, 21, 0.89));
+    margin: auto;
+    font-weight: 600;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.753);
+}
 
-.salvoMiss{
+.salvoMiss {
     width: 25px;
     height: 25px;
     border-radius: 50%;
     text-align: center;
     margin: auto;
-    border:1px solid gray;
-    background-image:radial-gradient(rgba(115, 199, 238, 0.644), rgba(202, 223, 233, 0.644), rgba(108, 196, 236, 0.644), rgba(82, 190, 240, 0.644)) ;
-    font-weight:600;
+    border: 1px solid gray;
+    background-image: radial-gradient(rgba(115, 199, 238, 0.644), rgba(202, 223, 233, 0.644), rgba(108, 196, 236, 0.644), rgba(82, 190, 240, 0.644));
+    font-weight: 600;
     box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.753);
 }
 
-.salvoHit:hover, .salvoMiss:hover{
+.salvoHit:hover,
+.salvoMiss:hover {
     box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.856);
-    transition:0.3s;
+    transition: 0.3s;
 }
 
-.boxForShipFree{
+.boxForShipFree {
     background-color: greenyellow;
 }
 
-.boxForShipFree:active{
+.boxForShipFree:active {
     background-color: olivedrab;
 }
 
-.boxShipInUse{
+.boxShipInUse {
     background-color: rgba(148, 13, 13, 0.781)
 }
 
-.shipBox0{
-    width:100%;
+.shipBox0 {
+    width: 100%;
 }
 
-.shipBox1{
-    width:80%;
+.shipBox1 {
+    width: 80%;
 }
 
-.shipBox2, .shipBox3{
-    width:60%;
+.shipBox2,
+.shipBox3 {
+    width: 60%;
 }
 
-.shipBox4{
-    width:40%;
+.shipBox4 {
+    width: 40%;
 }
 
-.shipBox0, .shipBox1, .shipBox2, .shipBox3, .shipBox4{
+.shipBox0,
+.shipBox1,
+.shipBox2,
+.shipBox3,
+.shipBox4 {
     height: 35px;
     border: 2px solid rgb(206, 206, 209);
-    background-image: linear-gradient(rgba(17, 22, 26, 0.603),rgba(75, 76, 77, 0.808), rgba(108, 116, 121, 0.596),rgba(63, 64, 65, 0.61),rgba(154, 192, 221, 0.603),
-    rgba(105, 105, 105, 0.61),rgba(26, 28, 29, 0.596) );
+    background-image: linear-gradient(rgba(17, 22, 26, 0.603), rgba(75, 76, 77, 0.808), rgba(108, 116, 121, 0.596), rgba(63, 64, 65, 0.61), rgba(154, 192, 221, 0.603),
+        rgba(105, 105, 105, 0.61), rgba(26, 28, 29, 0.596));
     box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.753);
 }
 
-.shipBox0 div{
+.shipBox0:hover,
+.shipBox1:hover,
+.shipBox2:hover,
+.shipBox3:hover,
+.shipBox4:hover {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.753);
+    transition: 0.2s;
+}
+
+.shipBox0 div {
     width: 20%;
     height: 100%;
 }
 
-.shipBox1 div{
+.shipBox1 div {
     width: 25%;
     height: 100%;
 }
 
-.shipBox2 div, .shipBox3 div{
+.shipBox2 div,
+.shipBox3 div {
     width: 33.3%;
     height: 100%;
 }
 
-.shipBox4 div{
-    width:50%;
-    height:100%;
+.shipBox4 div {
+    width: 50%;
+    height: 100%;
 }
 
-.shipBoxColor{
-    background-image: linear-gradient(rgba(223, 115, 88, 0.712),rgba(214, 152, 123, 0.712),rgba(214, 108, 90, 0.712),rgba(221, 155, 125, 0.712),rgba(224, 162, 134, 0.712),
-    rgba(240, 189, 166, 0.712),rgba(221, 143, 107, 0.712) );
-    /* background-image:radial-gradient(rgba(163, 27, 61, 0.911), rgba(218, 205, 208, 0.918), rgba(197, 56, 92, 0.904),rgba(71, 5, 21, 0.89) ) ; */
+.shipBoxColor {
+    background-image: linear-gradient(rgba(223, 115, 88, 0.712), rgba(214, 152, 123, 0.712), rgba(214, 108, 90, 0.712), rgba(221, 155, 125, 0.712), rgba(224, 162, 134, 0.712),
+        rgba(240, 189, 166, 0.712), rgba(221, 143, 107, 0.712));
 }

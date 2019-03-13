@@ -5,11 +5,11 @@ let app = new Vue({
     data: {
 
         gameInfo: null,
-        gameStatus:"placing ships",
         ships: [],
         salvos: [],
         hits: [],
         actualSalvos: [],
+        gameStatus: "placing ships",
         hover: false,
         salvoHover: false,
         salvoPlaceable: false,
@@ -19,6 +19,26 @@ let app = new Vue({
         url: "",
         columns: [" ", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         rows: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
+        shipName: "",
+        carrier: true,
+        carrierVertical: true,
+        battleShip: true,
+        battleVertical: true,
+        submarine: true,
+        submarineVertical: true,
+        destroyer: true,
+        destroyerVertical: true,
+        patrolBoat: true,
+        partolVertical: true,
+        cancelCarrier: false,
+        cancelBattleShip: false,
+        cancelSubmarine: false,
+        cancelDestroyer: false,
+        cancelPatrolBoat: false,
+        sendShipsBtn: false,
+        salvosBtn: false,
+        fireSalvosBtn: false,
+        playerSalvos: [],
         actualShips: [{
                 "shipType": "carrier",
                 "shipLocations": []
@@ -39,27 +59,8 @@ let app = new Vue({
                 "shipType": "patrol boat",
                 "shipLocations": []
             },
-        ],
-        shipName: "",
-        carrier: true,
-        carrierVertical: true,
-        battleShip: true,
-        battleVertical: true,
-        submarine: true,
-        submarineVertical: true,
-        destroyer: true,
-        destroyerVertical: true,
-        patrolBoat: true,
-        partolVertical: true,
-        cancelCarrier: false,
-        cancelBattleShip: false,
-        cancelSubmarine: false,
-        cancelDestroyer: false,
-        cancelPatrolBoat: false,
-        sendShipsBtn: false,
-        salvosBtn: false,
-        fireSalvosBtn: false,
-        playerSalvos: []
+        ]
+  
     },
 
     methods: {
@@ -123,21 +124,20 @@ let app = new Vue({
         },
 
         placeShips() {
-            
             for (let i = 0; i < this.ships.length; i++) {
-                if(this.ships[i]["locations"][0].slice(1) == this.ships[i]["locations"][1].slice(1)){
+                if (this.ships[i]["locations"][0].slice(1) == this.ships[i]["locations"][1].slice(1)) {
                     for (let j = 0; j < this.ships[i]["locations"].length; j++) {
                         let shipLocationPl = "pl" + this.ships[i]["locations"][j];
                         let locationInGridPL = document.getElementById(shipLocationPl);
                         locationInGridPL.classList.add("shipVertical");
                         console.log("hor");
                     }
-                } else{
+                } else {
                     for (let j = 0; j < this.ships[i]["locations"].length; j++) {
                         let shipLocationPl = "pl" + this.ships[i]["locations"][j];
                         let locationInGridPL = document.getElementById(shipLocationPl);
                         locationInGridPL.classList.add("shipHorizontal");
-                        
+
                     }
                 }
             }
@@ -168,7 +168,7 @@ let app = new Vue({
                             let salvoLocOpp = this.salvos[turn][gpId][k];
                             let salvoLocationOpp = "pl" + salvoLocOpp;
                             if (document.getElementById(salvoLocationOpp).classList.contains("shipHorizontal") ||
-                            document.getElementById(salvoLocationOpp).classList.contains("shipVertical")) {
+                                document.getElementById(salvoLocationOpp).classList.contains("shipVertical")) {
                                 document.getElementById(salvoLocationOpp).innerHTML = "<div class='salvoHit'>" + turn + "</div>";
                             } else {
                                 document.getElementById(salvoLocationOpp).innerHTML = "<div class='salvoMiss'>" + turn + "</div>";
@@ -186,7 +186,7 @@ let app = new Vue({
             });
         },
 
-        showPlayersNames(){
+        showPlayersNames() {
             document.getElementById("nameDisplayPL").innerText = this.gameInfo.playerName;
             document.getElementById("nameDisplayOPP").innerText = this.gameInfo.opponentName;
         },
@@ -194,39 +194,37 @@ let app = new Vue({
         postShips() {
             let counter = 0;
             let shipsPlaced = true;
-            for(let i=0; i<this.actualShips.length;i++){
-                if(this.actualShips[i].shipLocations.length !== 0){
+            for (let i = 0; i < this.actualShips.length; i++) {
+                if (this.actualShips[i].shipLocations.length !== 0) {
                     counter++;
                 } else {
                     shipsPlaced = false;
                 }
             }
-            if(counter == 5 && shipsPlaced){
+            if (counter == 5 && shipsPlaced) {
                 fetch("/api/games/players/" + this.getGpInUrl() + "/ships", {
-                    credentials: "include",
-                    headers: {
-                        'Content-type': 'application/json'
-                    },
-                    method: 'POST',
-                    body: JSON.stringify(app.actualShips)
-                })
-                .then(response => {
-                    console.log(response);
-                    if (response.status == 201) {
-                        window.location.reload();
-                    }
-                    return response.json();
-                }).then(json => {
-                    console.log(json);
-                })
-                .catch(error => {
-                    console.log('Request failure: ', error);
-                })
+                        credentials: "include",
+                        headers: {
+                            'Content-type': 'application/json'
+                        },
+                        method: 'POST',
+                        body: JSON.stringify(app.actualShips)
+                    })
+                    .then(response => {
+                        console.log(response);
+                        if (response.status == 201) {
+                            window.location.reload();
+                        }
+                        return response.json();
+                    }).then(json => {
+                        console.log(json);
+                    })
+                    .catch(error => {
+                        console.log('Request failure: ', error);
+                    })
             } else {
                 alert("place all ships");
             }
-            
-            
         },
 
         postSalvos() {
@@ -331,7 +329,7 @@ let app = new Vue({
                         let counter = 0;
                         for (let i = 0; i < this.shipLength; i++) {
                             if (!document.getElementById(hoveredBoxIdFirstPart + (hoveredBoxIdSecondPart + i)).classList.contains("shipHorizontal") &&
-                            !document.getElementById(hoveredBoxIdFirstPart + (hoveredBoxIdSecondPart + i)).classList.contains("shipVertical")) {
+                                !document.getElementById(hoveredBoxIdFirstPart + (hoveredBoxIdSecondPart + i)).classList.contains("shipVertical")) {
                                 counter++;
                                 if (counter == this.shipLength) {
                                     for (let j = 0; j < this.shipLength; j++) {
@@ -365,7 +363,7 @@ let app = new Vue({
                         let counter = 0;
                         for (let i = 0; i < this.shipLength; i++) {
                             if (!document.getElementById("pl" + (this.rows[hoveredBoxIndexInRows + i]) + hoveredBoxIdNumber).classList.contains("shipHorizontal") &&
-                            !document.getElementById("pl" + (this.rows[hoveredBoxIndexInRows + i]) + hoveredBoxIdNumber).classList.contains("shipVertical")) {
+                                !document.getElementById("pl" + (this.rows[hoveredBoxIndexInRows + i]) + hoveredBoxIdNumber).classList.contains("shipVertical")) {
                                 counter++;
                                 if (counter == this.shipLength) {
                                     for (let j = 0; j < this.shipLength; j++) {
@@ -510,12 +508,11 @@ let app = new Vue({
                 if (this.actualShips[i]["shipType"] == nameOfShip) {
                     let locations = app.actualShips[i]["shipLocations"];
                     locations.forEach(location => {
-                        if(document.getElementById("pl" + location).classList.contains("shipHorizontal")){
+                        if (document.getElementById("pl" + location).classList.contains("shipHorizontal")) {
                             document.getElementById("pl" + location).classList.remove("shipHorizontal");
-                        } else if(document.getElementById("pl" + location).classList.contains("shipVertical")){
+                        } else if (document.getElementById("pl" + location).classList.contains("shipVertical")) {
                             document.getElementById("pl" + location).classList.remove("shipVertical");
                         }
-                        
                     })
                     app.actualShips[i]["shipLocations"] = [];
                 }
@@ -550,7 +547,7 @@ let app = new Vue({
             }
         },
 
-    placingSalvos() {
+        placingSalvos() {
             if (this.gameInfo.gamePlayers.length == 1) {
                 alert("wait for opponent to join");
             } else if (this.gameInfo.opponentHasShips == false) {
@@ -558,84 +555,84 @@ let app = new Vue({
             } else {
                 this.salvoHover = true;
             }
-    },
+        },
 
-    hoveringSalvos() {
-        if (this.salvoHover) {
-            let hoveredBox = event.target;
-            if (hoveredBox.classList.contains("salvoHit") || hoveredBox.classList.contains("salvoMiss") ) {
-                hoveredBox.classList.add("boxShipInUse");
-                this.salvoPlaceable = false;
-            }
-            if (hoveredBox.childNodes.length == 0) {
-                if (hoveredBox.classList.contains("salvo")) {
+        hoveringSalvos() {
+            if (this.salvoHover) {
+                let hoveredBox = event.target;
+                if (hoveredBox.classList.contains("salvoHit") || hoveredBox.classList.contains("salvoMiss")) {
+                    hoveredBox.classList.add("boxShipInUse");
                     this.salvoPlaceable = false;
-                } else {
-                    hoveredBox.classList.add("boxForShipFree");
-                    this.salvoPlaceable = true;
                 }
+                if (hoveredBox.childNodes.length == 0) {
+                    if (hoveredBox.classList.contains("salvo")) {
+                        this.salvoPlaceable = false;
+                    } else {
+                        hoveredBox.classList.add("boxForShipFree");
+                        this.salvoPlaceable = true;
+                    }
+                } else {
+                    hoveredBox.classList.add("boxShipInUse");
+                    this.salvoPlaceable = false;
+                }
+            }
+        },
+
+        unhoveringSalvos() {
+            if (this.salvoHover) {
+                let hoveredBox = event.target;
+                if (hoveredBox.classList == "salvoHit" || hoveredBox.classList == "salvoMiss") {
+                    hoveredBox.classList.remove("boxShipInUse");
+                }
+                if (hoveredBox.childNodes.length == 0) {
+                    hoveredBox.classList.remove("boxForShipFree");
+                    hoveredBox.classList.remove("boxShipInUse");
+                } else {
+                    hoveredBox.classList.remove("boxShipInUse");
+                }
+            }
+        },
+
+        clickableSalvos() {
+            if (this.salvoHover && this.salvoPlaceable) {
+                let hoveredBox = event.target;
+                document.getElementById(hoveredBox.id).classList.add("salvo");
+                document.getElementById(hoveredBox.id).classList.remove("boxForShipFree");
+                if (this.actualSalvos.indexOf(hoveredBox.id.slice(3)) == -1) {
+                    this.actualSalvos.push(hoveredBox.id.slice(3));
+                }
+                if (this.actualSalvos.filter((item, pos) => this.actualSalvos.indexOf(item) === pos).length == 5) {
+                    this.salvoPlaceable = false;
+                    this.salvoHover = false;
+                    this.salvosBtn = false;
+                    this.fireSalvosBtn = true;
+                }
+            }
+        },
+
+        hideAndShowOppTableAfterPlacingShips() {
+            if (!this.gameInfo.playerHasShips) {
+                document.getElementById("tableOpponent").style.display = "none";
+                document.getElementById("middleSection").style.display = "none";
+                document.getElementById("gameStatus").classList.remove("mt-2");
+                document.getElementById("gameStatus").style.display = "none";
+
             } else {
-                hoveredBox.classList.add("boxShipInUse");
-                this.salvoPlaceable = false;
+                document.getElementById("marginTopChanging").classList.replace("mt-2", "mt-4");
             }
-        }
-    },
+        },
 
-    unhoveringSalvos() {
-        if (this.salvoHover) {
-            let hoveredBox = event.target;
-            if (hoveredBox.classList == "salvoHit" || hoveredBox.classList == "salvoMiss") {
-                hoveredBox.classList.remove("boxShipInUse");
+        showSendShipsBtn() {
+            if (this.cancelCarrier && this.cancelBattleShip && this.cancelDestroyer && this.cancelSubmarine && this.cancelPatrolBoat) {
+                this.sendShipsBtn = true;
             }
-            if (hoveredBox.childNodes.length == 0) {
-                hoveredBox.classList.remove("boxForShipFree");
-                hoveredBox.classList.remove("boxShipInUse");
-            } else {
-                hoveredBox.classList.remove("boxShipInUse");
-            }
-        }
-    },
+        },
 
-    clickableSalvos() {
-        if (this.salvoHover && this.salvoPlaceable) {
-            let hoveredBox = event.target;
-            document.getElementById(hoveredBox.id).classList.add("salvo");
-            document.getElementById(hoveredBox.id).classList.remove("boxForShipFree");
-            if(this.actualSalvos.indexOf(hoveredBox.id.slice(3)) == -1){
-                this.actualSalvos.push(hoveredBox.id.slice(3));
-            }
-            if (this.actualSalvos.filter((item, pos) => this.actualSalvos.indexOf(item) === pos).length == 5) {
-                this.salvoPlaceable = false;
-                this.salvoHover = false;
-                this.salvosBtn = false;
-                this.fireSalvosBtn = true;
-            }
-        }
-    },
-
-    hideAndShowOppTableAfterPlacingShips(){
-        if(!this.gameInfo.playerHasShips){
-            document.getElementById("tableOpponent").style.display ="none";
-            document.getElementById("middleSection").style.display ="none";
-            document.getElementById("gameStatus").classList.remove("mt-2");
-            document.getElementById("gameStatus").style.display="none";
-
-        } else {
-            document.getElementById("marginTopChanging").classList.replace("mt-2", "mt-4");
-        }
-    },
-
-    showSendShipsBtn(){
-        if (this.cancelCarrier && this.cancelBattleShip && this.cancelDestroyer && this.cancelSubmarine && this.cancelPatrolBoat) {
-            this.sendShipsBtn = true;
-        }
-    },
-
-    checkIfStatusChanged(){
+        checkIfStatusChanged() {
             fetch(this.url, {
-                method:"GET"
-            }).then(res =>{
-                if(!res.ok){
+                method: "GET"
+            }).then(res => {
+                if (!res.ok) {
                     throw Error(res.status);
                 }
                 return res;
@@ -643,119 +640,115 @@ let app = new Vue({
                 return data.json();
             }).then(myData => {
                 console.log(myData);
-                if(myData.gameStatus == "shooting" || myData.gameStatus == "player wins" || myData.gameStatus == "opponent wins" || myData.gameStatus == "game over"
-                ){
-                location.reload();
+                if (myData.gameStatus == "shooting" || myData.gameStatus == "player wins" || myData.gameStatus == "opponent wins" || myData.gameStatus == "game over") {
+                    location.reload();
                 }
             }).catch(err => {
                 console.log(err);
             })
-        
-    },
 
-    updateGameStatus(){
-        if(!this.gameInfo.playerHasShips){
-            document.getElementById('gameStatusText').innerText = "Status: placing ships";
-        } else if(this.gameStatus == "player wins"){
-            document.getElementById('gameStatusText').innerText =`Status: ${this.gameInfo.playerName} wins!`;
-        } else if(this.gameStatus == "opponent wins"){
-            document.getElementById('gameStatusText').innerText = `Status: ${this.gameInfo.opponentName} wins!`;
-        } else if(this.gameStatus == "game over"){
-            document.getElementById('gameStatusText').innerText = "Status: Game over. It's a tie!";
-        } else if(this.gameStatus == 'waiting' || this.gameStatus == 'waiting for opponent'){
-            setInterval(this.checkIfStatusChanged, 3000);
-        } else {
-            this.gameStatus = this.gameInfo.gameStatus;
-        }
-    },
+        },
 
-    salvoButtonDisplay(){
-        if(this.gameStatus == "shooting" && !this.fireSalvosBtn){
-            this.salvosBtn = true;
-        }
-    },
-
-    giveNamesToDisplayShips(){
-        for(let i=0; i<this.ships.length; i++){
-            if(this.ships[i].type == 'carrier'){
-                document.getElementById('shipName0').innerText = "Carrier";
-            } else if(this.ships[i].type == 'battle ship'){
-                document.getElementById('shipName1').innerText = "Battle Ship";
-            } else if(this.ships[i].type == 'submarine'){
-                document.getElementById('shipName2').innerText = "Submarine";
-            } else if(this.ships[i].type == 'destroyer'){
-                document.getElementById('shipName3').innerText = "Destroyer";
+        updateGameStatus() {
+            if (!this.gameInfo.playerHasShips) {
+                document.getElementById('gameStatusText').innerText = "Status: placing ships";
+            } else if (this.gameStatus == "player wins") {
+                document.getElementById('gameStatusText').innerText = `Status: ${this.gameInfo.playerName} wins!`;
+            } else if (this.gameStatus == "opponent wins") {
+                document.getElementById('gameStatusText').innerText = `Status: ${this.gameInfo.opponentName} wins!`;
+            } else if (this.gameStatus == "game over") {
+                document.getElementById('gameStatusText').innerText = "Status: Game over. It's a tie!";
+            } else if (this.gameStatus == 'waiting' || this.gameStatus == 'waiting for opponent') {
+                setInterval(this.checkIfStatusChanged, 3000);
             } else {
-                document.getElementById('shipName4').innerText = "Patrol Boat";
+                this.gameStatus = this.gameInfo.gameStatus;
             }
+        },
+
+        salvoButtonDisplay() {
+            if (this.gameStatus == "shooting" && !this.fireSalvosBtn) {
+                this.salvosBtn = true;
+            }
+        },
+
+        giveNamesToDisplayShips() {
+            for (let i = 0; i < this.ships.length; i++) {
+                if (this.ships[i].type == 'carrier') {
+                    document.getElementById('shipName0').innerText = "Carrier";
+                } else if (this.ships[i].type == 'battle ship') {
+                    document.getElementById('shipName1').innerText = "Battle Ship";
+                } else if (this.ships[i].type == 'submarine') {
+                    document.getElementById('shipName2').innerText = "Submarine";
+                } else if (this.ships[i].type == 'destroyer') {
+                    document.getElementById('shipName3').innerText = "Destroyer";
+                } else {
+                    document.getElementById('shipName4').innerText = "Patrol Boat";
+                }
+            }
+        },
+
+        paintDivsInDisplayShips() {
+            for (hit in this.gameInfo.hitsWithShipName) {
+                if (this.gameInfo.hitsWithShipName[hit] == 'carrier') {
+                    let div = document.createElement("div");
+                    div.classList.add("shipBoxColor");
+                    document.getElementById('shipBox0').appendChild(div);
+                } else if (this.gameInfo.hitsWithShipName[hit] == 'battle ship') {
+                    let div = document.createElement("div");
+                    div.classList.add("shipBoxColor");
+                    document.getElementById('shipBox1').appendChild(div);
+                } else if (this.gameInfo.hitsWithShipName[hit] == 'submarine') {
+                    let div = document.createElement("div");
+                    div.classList.add("shipBoxColor");
+                    document.getElementById('shipBox2').appendChild(div);
+                } else if (this.gameInfo.hitsWithShipName[hit] == 'destroyer') {
+                    let div = document.createElement("div");
+                    div.classList.add("shipBoxColor");
+                    document.getElementById('shipBox3').appendChild(div);
+                } else {
+                    let div = document.createElement("div");
+                    div.classList.add("shipBoxColor");
+                    document.getElementById('shipBox4').appendChild(div);
+                }
+            }
+            //no repetition after updates
+            this.gameInfo.hitsWithShipName = {};
         }
+
     },
 
-    paintDivsInDisplayShips(){
-        for(hit in this.gameInfo.hitsWithShipName){
-            if(this.gameInfo.hitsWithShipName[hit] == 'carrier'){
-                let div= document.createElement("div");
-                div.classList.add("shipBoxColor");
-                document.getElementById('shipBox0').appendChild(div);
-            } else if(this.gameInfo.hitsWithShipName[hit] == 'battle ship'){
-                let div= document.createElement("div");
-                div.classList.add("shipBoxColor");
-                document.getElementById('shipBox1').appendChild(div);
-            } else if(this.gameInfo.hitsWithShipName[hit] == 'submarine'){
-                let div= document.createElement("div");
-                div.classList.add("shipBoxColor");
-                document.getElementById('shipBox2').appendChild(div);
-            } else if(this.gameInfo.hitsWithShipName[hit] == 'destroyer'){
-                let div= document.createElement("div");
-                div.classList.add("shipBoxColor");
-                document.getElementById('shipBox3').appendChild(div);
-            } else {
-                let div= document.createElement("div");
-                div.classList.add("shipBoxColor");
-                document.getElementById('shipBox4').appendChild(div);
-            }
-        }
-        //no repetition after updates
-        this.gameInfo.hitsWithShipName = {};
+    created() {
+        this.url = "/api/game_view/" + this.getGpInUrl();
+        this.getData();
+
+    },
+    mounted() {
+        document.querySelectorAll('[data-field=boxForShip]').forEach(box => {
+            box.addEventListener("mouseover", this.hoveringShips);
+            box.addEventListener("mouseout", this.unhoveringShips);
+            box.addEventListener("click", this.clickableShips);
+        });
+
+        document.querySelectorAll('[data-field=boxForSalvo]').forEach(square => {
+            square.addEventListener("mouseover", this.hoveringSalvos);
+            square.addEventListener("mouseout", this.unhoveringSalvos);
+            square.addEventListener("click", this.clickableSalvos);
+        });
+
+    },
+
+    computed: {
+
+    },
+
+    updated() {
+        this.showSendShipsBtn();
+        this.hideAndShowOppTableAfterPlacingShips();
+        this.updateGameStatus();
+        this.salvoButtonDisplay();
+        this.showPlayersNames();
+        this.giveNamesToDisplayShips();
+        this.paintDivsInDisplayShips();
     }
-
-},
-
-created() {
-    this.url = "/api/game_view/" + this.getGpInUrl();
-    this.getData();
-
-},
-mounted() {
-    document.querySelectorAll('[data-field=boxForShip]').forEach(box => {
-        box.addEventListener("mouseover", this.hoveringShips);
-        box.addEventListener("mouseout", this.unhoveringShips);
-        box.addEventListener("click", this.clickableShips);
-    });
-
-    document.querySelectorAll('[data-field=boxForSalvo]').forEach(square => {
-        square.addEventListener("mouseover", this.hoveringSalvos);
-        square.addEventListener("mouseout", this.unhoveringSalvos);
-        square.addEventListener("click", this.clickableSalvos);
-    });
-
-
-
-
-},
-
-computed: {
- 
-},
-
-updated() {
-    this.showSendShipsBtn();
-    this.hideAndShowOppTableAfterPlacingShips();
-    this.updateGameStatus();
-    this.salvoButtonDisplay();
-    this.showPlayersNames();
-    this.giveNamesToDisplayShips();
-    this.paintDivsInDisplayShips();
-}
 
 });

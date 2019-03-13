@@ -65,13 +65,13 @@ public class SalvoApplication {
 			GamePlayer gp5 = new GamePlayer(p4, g3);
 			GamePlayer gp6 = new GamePlayer(p3, g3);
 
-
 			gamePlayerRepository.save(gp1);
 			gamePlayerRepository.save(gp2);
 			gamePlayerRepository.save(gp3);
 			gamePlayerRepository.save(gp4);
 			gamePlayerRepository.save(gp5);
 			gamePlayerRepository.save(gp6);
+
 
 			//carrier 5, battleship 4, submarine 3, destroyer 3, patrol boat 2;
 			Ship sh1= new Ship("Carrier",  new ArrayList<>(Arrays.asList("A1", "A2", "A3", "A4", "A5")) );
@@ -205,7 +205,8 @@ public class SalvoApplication {
 			Score scr1= new Score(0.5, g1, p1);
 			Score scr2= new Score(0.5, g1, p2);
 			Score scr3= new Score(1.0, g2, p3);
-			Score scr4= new Score(0.0, g2, p4);
+			Score scr4= new Score(0.0, g2, p2);
+
 
 			scoreRepository.save(scr1);
 			scoreRepository.save(scr2);
